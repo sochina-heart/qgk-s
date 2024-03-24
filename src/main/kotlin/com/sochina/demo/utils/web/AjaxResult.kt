@@ -34,7 +34,7 @@ class AjaxResult : HashMap<String?, Any?> {
     constructor(code: Int, msg: String?, data: Any?) {
         super.put(CODE_TAG, code)
         super.put(MSG_TAG, msg)
-        if (com.sochina.demo.utils.StringUtils.isNotNull(data)) {
+        if (data != null) {
             super.put(DATA_TAG, data)
         }
     }
