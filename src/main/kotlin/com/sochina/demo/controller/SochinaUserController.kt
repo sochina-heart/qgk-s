@@ -61,10 +61,12 @@ class SochinaUserController(
             when {
                 (count > 0) -> AjaxResult.error("user account is exist")
                 sochinaUser.userPassword.isNullOrEmpty() -> AjaxResult.error("user password is empty")
-                (PasswordUtils.validate(sochinaUser.userPassword!!) < 5) -> AjaxResult.error("user password is weak password")
+                (PasswordUtils.validate(sochinaUser.userPassword!!) < 4) -> AjaxResult.error("user password is weak password")
                 else -> {
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
+                    sochinaUser.state = "0"
+                    sochinaUser.deleteFlag = "0"
                     sochinaUser.userPassword = SM3Utils.encrypt(sochinaUser.userPassword!!)
                     AjaxResult.toAjax(baseMapper.insert(sochinaUser))
                 }

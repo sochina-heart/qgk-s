@@ -15,7 +15,8 @@ object PasswordUtils {
             listOf(
                 ".*[a-z].*",
                 ".*[A-Z].*",
-                ".*\\d.*"
+                ".*\\d.*",
+                ".*\\p{Punct}.*"
             ).count { pattern ->
                 this.matches(Regex(pattern))
             }.let { matchedPatternsCount ->
