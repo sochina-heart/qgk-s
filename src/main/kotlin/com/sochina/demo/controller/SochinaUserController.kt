@@ -1,8 +1,12 @@
 package com.sochina.demo.controller
 
+import cn.hutool.core.lang.TypeReference
+import cn.hutool.json.JSON
+import cn.hutool.json.JSONObject
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.fasterxml.jackson.databind.ObjectMapper
 import com.sochina.demo.domain.SochinaUser
 import com.sochina.demo.mapper.SochinaUserMapper
 import com.sochina.demo.utils.PasswordUtils
@@ -11,11 +15,14 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
+import io.vertx.mutiny.core.buffer.Buffer
+import jakarta.json.JsonObject
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
+import java.io.IOException
 import java.util.*
 
 
@@ -91,8 +98,10 @@ class SochinaUserController(
 
     @POST
     @Path("/remove")
-    fun removeUser(ids: List<String>): Uni<AjaxResult> {
+    fun removeUser(jsonObject: JsonObject): Uni<AjaxResult> {
         return uni {
+            val regex = Regex("\"([^\"]*)\"")
+            val ids = regex.findAll(jsonObject["ids"].toString()).map { it.groupValues[1] }.toList()
             if (ids.isEmpty()) {
                 AjaxResult.success()
             } else {

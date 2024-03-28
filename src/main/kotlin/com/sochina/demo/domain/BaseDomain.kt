@@ -3,10 +3,9 @@ package com.sochina.demo.domain
 import com.baomidou.mybatisplus.annotation.TableField
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
-import java.io.Serializable
 import java.util.*
 
-open class BaseDomain : Serializable {
+open class BaseDomain {
 
     var state: String? = null
 

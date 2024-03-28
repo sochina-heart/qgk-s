@@ -5,10 +5,9 @@ import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 import jakarta.validation.constraints.NotBlank
 import org.hibernate.validator.constraints.Length
-import java.io.Serializable
 
 @TableName("sochina_user")
-class SochinaUser : BaseDomain(), Serializable {
+class SochinaUser : BaseDomain() {
 
     @TableId("user_id")
     var userId: String? = null

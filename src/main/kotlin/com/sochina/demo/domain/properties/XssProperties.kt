@@ -1,11 +1,9 @@
 package com.sochina.demo.domain.properties
 
-import java.io.Serializable
-
 /**
  * @author sochina-heart
  */
-class XssProperties : BaseProperties(), Serializable {
+class XssProperties : BaseProperties() {
     var sensitiveData: String = ""
     var pattern: MutableMap<String, String>? = mutableMapOf()
 }

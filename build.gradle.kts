@@ -36,7 +36,6 @@ dependencies {
     implementation("org.bouncycastle:bcpkix-jdk18on:${property("bouncy")}")
     implementation("cn.hutool:hutool-all:5.8.26")
     implementation("commons-io:commons-io:2.15.1")
-    implementation("com.alibaba.fastjson2:fastjson2:2.0.47")
 }
 
 group = "com.sochina"

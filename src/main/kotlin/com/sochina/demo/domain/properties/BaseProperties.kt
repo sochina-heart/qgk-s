@@ -1,11 +1,9 @@
 package com.sochina.demo.domain.properties
 
-import java.io.Serializable
-
 /**
  * @author sochina-heart
  */
-open class BaseProperties : Serializable {
+open class BaseProperties {
 
     var enable: Boolean = true
 

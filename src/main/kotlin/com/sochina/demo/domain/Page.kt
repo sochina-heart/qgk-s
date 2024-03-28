@@ -1,8 +1,6 @@
 package com.sochina.demo.domain
 
-import java.io.Serializable
-
-open class Page<T> : Serializable {
+open class Page<T> {
 
     var records: List<T>? = null
 
