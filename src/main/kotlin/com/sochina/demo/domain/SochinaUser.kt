@@ -10,7 +10,7 @@ import java.io.Serializable
 @TableName("sochina_user")
 class SochinaUser : BaseDomain(), Serializable {
 
-    @TableId
+    @TableId("user_id")
     var userId: String? = null
 
     @Length(min = 1, max = 100, message = "账号长度必须在1-100之间")

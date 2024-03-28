@@ -96,7 +96,7 @@ class SochinaUserController(
             if (ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                val updateWrapper = UpdateWrapper<SochinaUser>().set("delete_flag", "1").`in`("userId", ids)
+                val updateWrapper = UpdateWrapper<SochinaUser>().set("delete_flag", "1").`in`("user_id", ids)
                 AjaxResult.toAjax(baseMapper.update(updateWrapper))
             }
         }
