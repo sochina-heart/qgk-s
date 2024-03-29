@@ -1,12 +1,12 @@
 package com.sochina.demo.utils.web
 
-import cn.hutool.http.HttpStatus
+import com.fasterxml.jackson.annotation.JsonInclude
 
 // Include.Include.ALWAYS 默认
 // Include.NON_DEFAULT 属性为默认值不序列化
 // Include.NON_EMPTY 属性为 空（""） 或者为 NULL 都不序列化
 // Include.NON_NULL 属性为NULL 不序列化
-// @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 class AjaxResult : HashMap<String?, Any?> {
     /**
      * 初始化一个新创建的 AjaxResult 对象，使其表示一个空消息。
@@ -66,7 +66,12 @@ class AjaxResult : HashMap<String?, Any?> {
          * 数据对象
          */
         private const val DATA_TAG: String = "data"
+
         private const val WARN = 601
+
+        private const val ERROR = 500
+
+        private const val SUCCESS = 200
 
         /**
          * 返回成功消息
@@ -104,7 +109,7 @@ class AjaxResult : HashMap<String?, Any?> {
          * @return 成功消息
          */
         fun success(msg: String?, data: Any?): AjaxResult {
-            return AjaxResult(HttpStatus.HTTP_OK, msg, data)
+            return AjaxResult(SUCCESS, msg, data)
         }
 
         /**
@@ -155,7 +160,7 @@ class AjaxResult : HashMap<String?, Any?> {
          * @return 错误消息
          */
         fun error(msg: String?, data: Any?): AjaxResult {
-            return AjaxResult(HttpStatus.HTTP_INTERNAL_ERROR, msg, data)
+            return AjaxResult(ERROR, msg, data)
         }
 
         /**
