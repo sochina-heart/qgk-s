@@ -1,6 +1,6 @@
 package com.sochina.demo.utils.web
 
-import cn.hutool.http.HttpStatus
+import com.sochina.demo.constants.Constants
 
 class R<T> {
     var code: Int = 0
@@ -11,12 +11,12 @@ class R<T> {
         /**
          * 成功
          */
-        private const val SUCCESS: Int = HttpStatus.HTTP_OK
+        private const val SUCCESS: Int = Constants.SUCCESS
 
         /**
          * 失败
          */
-        private const val FAIL: Int = HttpStatus.HTTP_INTERNAL_ERROR
+        private const val FAIL: Int = Constants.ERROR
         fun <T> ok(): R<T?> {
             return restResult(null, SUCCESS, null)
         }

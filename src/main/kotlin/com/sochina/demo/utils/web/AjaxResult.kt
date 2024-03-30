@@ -1,6 +1,7 @@
 package com.sochina.demo.utils.web
 
 import com.fasterxml.jackson.annotation.JsonInclude
+import com.sochina.demo.constants.Constants
 
 // Include.Include.ALWAYS 默认
 // Include.NON_DEFAULT 属性为默认值不序列化
@@ -67,12 +68,6 @@ class AjaxResult : HashMap<String?, Any?> {
          */
         private const val DATA_TAG: String = "data"
 
-        private const val WARN = 601
-
-        private const val ERROR = 500
-
-        private const val SUCCESS = 200
-
         /**
          * 返回成功消息
          *
@@ -109,7 +104,7 @@ class AjaxResult : HashMap<String?, Any?> {
          * @return 成功消息
          */
         fun success(msg: String?, data: Any?): AjaxResult {
-            return AjaxResult(SUCCESS, msg, data)
+            return AjaxResult(Constants.SUCCESS, msg, data)
         }
 
         /**
@@ -130,7 +125,7 @@ class AjaxResult : HashMap<String?, Any?> {
          * @return 警告消息
          */
         fun warn(msg: String?, data: Any?): AjaxResult {
-            return AjaxResult(WARN, msg, data)
+            return AjaxResult(Constants.WARN, msg, data)
         }
 
         /**
@@ -160,7 +155,7 @@ class AjaxResult : HashMap<String?, Any?> {
          * @return 错误消息
          */
         fun error(msg: String?, data: Any?): AjaxResult {
-            return AjaxResult(ERROR, msg, data)
+            return AjaxResult(Constants.ERROR, msg, data)
         }
 
         /**

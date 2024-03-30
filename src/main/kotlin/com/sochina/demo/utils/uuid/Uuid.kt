@@ -1,6 +1,5 @@
 package com.sochina.demo.utils.uuid
 
-import cn.hutool.core.exceptions.UtilException
 import java.io.Serializable
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
@@ -398,7 +397,7 @@ class Uuid : Serializable, Comparable<Uuid> {
                 try {
                     return SecureRandom.getInstance("SHA1PRNG")
                 } catch (e: NoSuchAlgorithmException) {
-                    throw UtilException(e)
+                    throw Exception(e)
                 }
             }
         val random: ThreadLocalRandom

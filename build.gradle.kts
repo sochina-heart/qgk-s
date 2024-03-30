@@ -1,13 +1,10 @@
 plugins {
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.allopen") version "1.9.22"
+    kotlin("jvm") version "1.9.23"
+    kotlin("plugin.allopen") version "1.9.23"
     id("io.quarkus")
 }
 
-extra["log4j"] = "2.23.0"
 extra["bouncy"] = "1.77"
-extra["jedis"] = "5.1.1"
-extra["mybatis-flex"] = "1.8.2"
 
 repositories {
     mavenCentral()
@@ -34,8 +31,6 @@ dependencies {
     testImplementation("io.rest-assured:rest-assured")
     implementation("org.bouncycastle:bcprov-jdk18on:${property("bouncy")}")
     implementation("org.bouncycastle:bcpkix-jdk18on:${property("bouncy")}")
-    implementation("cn.hutool:hutool-all:5.8.26")
-    implementation("commons-io:commons-io:2.15.1")
 }
 
 group = "com.sochina"

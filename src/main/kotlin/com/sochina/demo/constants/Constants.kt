@@ -3,15 +3,12 @@ package com.sochina.demo.constants
 import java.util.regex.Pattern
 
 object Constants {
-    /**
-     * 通用成功标识
-     */
-    const val SUCCESS: String = "0"
 
-    /**
-     * 通用失败标识
-     */
-    const val FAIL: String = "1"
+    const val WARN = 601
+
+    const val ERROR = 500
+
+    const val SUCCESS = 200
 
     /**
      * UTF-8 字符集

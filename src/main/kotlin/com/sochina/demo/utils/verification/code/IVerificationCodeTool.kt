@@ -1,11 +1,11 @@
 package com.sochina.demo.utils.verification.code
 
-import cn.hutool.core.util.RandomUtil
 import com.sochina.demo.domain.VerificationCode
 import java.awt.Color
 import java.awt.Graphics
 import java.security.SecureRandom
 import kotlin.math.sin
+import kotlin.random.Random
 
 abstract class IVerificationCodeTool {
     protected var random: SecureRandom = SecureRandom()
@@ -46,9 +46,9 @@ abstract class IVerificationCodeTool {
     }
 
     protected fun shearX(g: Graphics, img_width: Int, img_height: Int, color: Color?) {
-        val period = RandomUtil.randomInt(img_width)
+        val period = Random.nextInt(img_width)
         val frames = 1
-        val phase = RandomUtil.randomInt(2)
+        val phase = Random.nextInt(2)
         for (i in 0 until img_height) {
             val d =
                 (period shr 1).toDouble() * sin(i.toDouble() / period.toDouble() + (6.2831853071795862 * phase.toDouble()) / frames.toDouble())
@@ -60,7 +60,7 @@ abstract class IVerificationCodeTool {
     }
 
     protected fun shearY(g: Graphics, img_width: Int, img_height: Int, color: Color?) {
-        val period = RandomUtil.randomInt(img_height shr 1)
+        val period = Random.nextInt(img_height shr 1)
         val frames = 20
         val phase = 7
         for (i in 0 until img_width) {

@@ -1,7 +1,6 @@
 package com.sochina.demo.utils.encrypt.pm
 
 import com.sochina.demo.utils.Base64Utils
-import org.apache.commons.io.FileUtils
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.ObjectInputStream
@@ -268,7 +267,7 @@ object RSAUtils {
      */
     @Throws(Exception::class)
     private fun resolvePublicKey(path: String): PublicKey {
-        FileUtils.openInputStream(File(path)).use { fis ->
+        File(path).inputStream().use { fis ->
             ObjectInputStream(fis).use { ois ->
                 return ois.readObject() as PublicKey
             }
@@ -282,7 +281,7 @@ object RSAUtils {
      */
     @Throws(Exception::class)
     private fun resolvePrivateKey(path: String): PrivateKey {
-        FileUtils.openInputStream(File(path)).use { fis ->
+        File(path).inputStream().use { fis ->
             ObjectInputStream(fis).use { ois ->
                 return ois.readObject() as PrivateKey
             }

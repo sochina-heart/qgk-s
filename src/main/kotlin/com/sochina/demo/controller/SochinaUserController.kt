@@ -12,13 +12,13 @@ import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.json.JsonObject
+import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import org.apache.ibatis.session.ExecutorType
-import org.apache.ibatis.session.SqlSession
 import org.apache.ibatis.session.SqlSessionFactory
 import java.util.*
 
@@ -54,7 +54,10 @@ class SochinaUserController(
             .orderByDesc("update_time")
             .select("user_id", "account", "user_name", "sex", "user_email", "home_address", "personal_description")
         val list =
-            baseMapper.selectPage(sochinaUser.page?.let { Page(it.pageNumber.toLong(), it.pageSize.toLong()) }, queryWrapper)
+            baseMapper.selectPage(
+                sochinaUser.page?.let { Page(it.pageNumber.toLong(), it.pageSize.toLong()) },
+                queryWrapper
+            )
         return uni { AjaxResult.success(list) }
     }
 
@@ -103,16 +106,12 @@ class SochinaUserController(
             if (ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                // val updateWrapper = UpdateWrapper<SochinaUser>().set("delete_flag", "1").`in`("user_id", ids)
-                // AjaxResult.toAjax(baseMapper.update(updateWrapper))
-                val sqlSession = sqlSessionFactory.openSession(ExecutorType.BATCH)
-                sqlSession.use {
+                    sqlSessionFactory.openSession(ExecutorType.BATCH).use {
                     val mapper = it.getMapper(SochinaUserMapper::class.java)
                     ids.forEach { item -> mapper.update(UpdateWrapper<SochinaUser>().set("delete_flag", "1").eq("user_id", item)) }
                 }
                 AjaxResult.success()
             }
         }
-
     }
 }

@@ -11,8 +11,8 @@ import jakarta.annotation.Priority
 @Priority(value = Priorities.PLATFORM)
 class EncryptConfigInterceptor : ConfigSourceInterceptor {
     override fun getValue(context: ConfigSourceInterceptorContext, name: String): ConfigValue? {
-        val key = System.getProperty("gs4k")
-        val ePrefix = System.getProperty("gs4kp")
+        val key = System.getenv("gs4k")
+        val ePrefix = System.getenv("gs4kp")
         if (key == null || key.isEmpty()) {
             throw RuntimeException("key or prefix is null")
         }

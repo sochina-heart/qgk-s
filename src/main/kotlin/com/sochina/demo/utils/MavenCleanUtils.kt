@@ -1,6 +1,5 @@
 package com.sochina.demo.utils
 
-import cn.hutool.core.io.FileUtil
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.File
@@ -52,7 +51,7 @@ object MavenCleanUtils {
 
     fun handleFile(url: File, list: List<String>) {
         url.listFiles()?.forEach {
-            if (it.isDirectory) {
+            if (!it.isFile && it.listFiles().isNullOrEmpty()) {
                 handleFile(it)
             } else {
                 if (isMatchPattern(it.name, list)) {
@@ -65,7 +64,7 @@ object MavenCleanUtils {
 
     private fun handleEmptyDirectory(url: File) {
         url.listFiles()?.forEach {
-            if (FileUtil.isDirEmpty(it)) {
+            if (it.isDirectory) {
                 it.delete()
                 LOGGER.info("folder ${it.absolutePath} delete")
             }
@@ -73,6 +72,6 @@ object MavenCleanUtils {
     }
 
     private fun isMatchPattern(url: String, list: List<String>): Boolean {
-        return StringUtils.matches(url, list)
+        return list.any { url.matches(it.toRegex()) }
     }
 }
