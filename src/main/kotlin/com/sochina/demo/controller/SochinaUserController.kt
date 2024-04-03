@@ -18,15 +18,12 @@ import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
-import org.apache.ibatis.session.ExecutorType
-import org.apache.ibatis.session.SqlSessionFactory
 import java.util.*
 
 
 @Path("/user")
 class SochinaUserController(
     private val baseMapper: SochinaUserMapper,
-    private val sqlSessionFactory: SqlSessionFactory
 ) {
     @GET
     @Path("/get/{id}")
@@ -73,7 +70,6 @@ class SochinaUserController(
                 else -> {
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
-                    sochinaUser.state = "0"
                     sochinaUser.deleteFlag = "0"
                     sochinaUser.userPassword = SM3Utils.encrypt(sochinaUser.userPassword!!)
                     AjaxResult.toAjax(baseMapper.insert(sochinaUser))
@@ -99,6 +95,7 @@ class SochinaUserController(
 
     @POST
     @Path("/remove")
+    @Transactional
     fun removeUser(jsonObject: JsonObject): Uni<AjaxResult> {
         return uni {
             val regex = Regex("\"([^\"]*)\"")
@@ -106,12 +103,13 @@ class SochinaUserController(
             if (ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                    sqlSessionFactory.openSession(ExecutorType.BATCH).use {
-                    val mapper = it.getMapper(SochinaUserMapper::class.java)
-                    ids.forEach { item -> mapper.update(UpdateWrapper<SochinaUser>().set("delete_flag", "1").eq("user_id", item)) }
+                ids.forEach {
+                    baseMapper.update(
+                        UpdateWrapper<SochinaUser>().set("delete_flag", "1").eq("user_id", it)
+                    )
                 }
-                AjaxResult.success()
             }
+            AjaxResult.success()
         }
     }
 }
