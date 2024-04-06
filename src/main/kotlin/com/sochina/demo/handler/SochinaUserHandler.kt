@@ -1,8 +1,9 @@
-package com.sochina.demo.controller
+package com.sochina.demo.handler
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.SochinaUser
 import com.sochina.demo.mapper.SochinaUserMapper
 import com.sochina.demo.utils.PasswordUtils
@@ -11,7 +12,6 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
-import jakarta.json.JsonObject
 import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
@@ -19,21 +19,28 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import java.util.*
+import java.util.logging.Logger
 
 
 @Path("/user")
-class SochinaUserController(
+class SochinaUserHandler(
     private val baseMapper: SochinaUserMapper,
 ) {
+
+    private val logger: Logger = Logger.getLogger(SochinaUserHandler::class.java.name)
+
     @GET
     @Path("/get/{id}")
     fun getUser(@PathParam("id") id: String): Uni<AjaxResult> {
-        if (id.isBlank()) {
-            return uni { AjaxResult.error("user id is empty") }
+        return uni {
+            if (id.isBlank()) {
+                logger.info("user id is $id")
+                AjaxResult.error("user id is empty")
+            }
+            val user = baseMapper.selectById(id)
+            user.userPassword = null
+            AjaxResult.success(user)
         }
-        val user = baseMapper.selectById(id)
-        user.userPassword = null
-        return uni { AjaxResult.success(user) }
     }
 
     @POST
@@ -58,13 +65,11 @@ class SochinaUserController(
         return uni { AjaxResult.success(list) }
     }
 
-    @POST
-    @Path("/add")
-    fun addUser(@Valid sochinaUser: SochinaUser): Uni<AjaxResult> {
+    fun addUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
         val count = baseMapper.selectCount(QueryWrapper<SochinaUser>().eq("account", sochinaUser.account))
         return uni {
             when {
-                (count > 0) -> AjaxResult.error("user account is exist")
+                (count > 0) -> AjaxResult.error("user has already")
                 sochinaUser.userPassword.isNullOrEmpty() -> AjaxResult.error("user password is empty")
                 (PasswordUtils.validate(sochinaUser.userPassword!!) < 4) -> AjaxResult.error("user password is weak password")
                 else -> {
@@ -78,8 +83,6 @@ class SochinaUserController(
         }
     }
 
-    @POST
-    @Path("/update")
     fun updateUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
         val count = baseMapper.selectCount(
             QueryWrapper<SochinaUser>().eq("account", sochinaUser.account).notIn("user_id", sochinaUser.userId)
@@ -94,16 +97,24 @@ class SochinaUserController(
     }
 
     @POST
+    @Path("/save")
+    fun saveUser(@Valid sochinaUser: SochinaUser): Uni<AjaxResult> {
+        return if (sochinaUser.userId.isNullOrEmpty()) {
+            addUser(sochinaUser)
+        } else {
+            updateUser(sochinaUser)
+        }
+    }
+
+    @POST
     @Path("/remove")
     @Transactional
-    fun removeUser(jsonObject: JsonObject): Uni<AjaxResult> {
+    fun removeUser(ids: Ids): Uni<AjaxResult> {
         return uni {
-            val regex = Regex("\"([^\"]*)\"")
-            val ids = regex.findAll(jsonObject["ids"].toString()).map { it.groupValues[1] }.toList()
-            if (ids.isEmpty()) {
+            if (ids.ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                ids.forEach {
+                ids.ids.forEach {
                     baseMapper.update(
                         UpdateWrapper<SochinaUser>().set("delete_flag", "1").eq("user_id", it)
                     )

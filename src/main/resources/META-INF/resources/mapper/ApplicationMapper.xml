@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sochina.demo.domain.Application">
+
+    <resultMap type="com.sochina.demo.domain.Application" id="ApplicationResult">
+        <id column="appId" property="app_id"/>
+        <result column="appName" property="app_name"/>
+        <result column="appUser" property="app_user"/>
+        <result column="appPhone" property="app_phone"/>
+        <result column="appEmail" property="app_email"/>
+        <result column="state" property="state"/>
+        <result column="deleteFlag" property="delete_flag"/>
+        <result column="createBy" property="create_by"/>
+        <result column="createTime" property="create_time"/>
+        <result column="updateBy" property="update_by"/>
+        <result column="updateTime" property="update_time"/>
+    </resultMap>
+</mapper> 

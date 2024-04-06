@@ -3,7 +3,9 @@ package com.sochina.demo.domain
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
+import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
+import org.bouncycastle.util.encoders.UTF8
 import org.hibernate.validator.constraints.Length
 
 @TableName("sochina_user")
@@ -26,6 +28,7 @@ class SochinaUser : BaseDomain() {
     var sex: String? = null
 
     @NotBlank(message = "邮箱不能为空")
+    @Email(message = "邮箱格式不正确")
     @TableField("user_email")
     var userEmail: String? = null
 

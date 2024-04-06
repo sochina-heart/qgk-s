@@ -88,10 +88,12 @@ COPY --chown=185 build/quarkus-app/*.jar /deployments/
 COPY --chown=185 build/quarkus-app/app/ /deployments/app/
 COPY --chown=185 build/quarkus-app/quarkus/ /deployments/quarkus/
 
-EXPOSE 8080
+EXPOSE 18887
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
+ENV gs4k=771622934d4f1e7865150dd042f3046f
+ENV gs4kp=ENC>=
 
 ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
 
