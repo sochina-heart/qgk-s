@@ -1,12 +1,13 @@
 package com.sochina.demo.domain
 
 import com.baomidou.mybatisplus.annotation.TableField
+import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 
 @TableName("sochina_resource")
 class Resource: BaseDomain() {
 
-    @TableField("resource_id")
+    @TableId("resource_id")
     var resourceId: String? = null
 
     @TableField("resource_name")
