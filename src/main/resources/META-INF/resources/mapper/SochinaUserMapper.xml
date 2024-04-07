@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sochina.demo.domain.SochinaUser">
+<mapper namespace="com.sochina.demo.mapper.SochinaUserMapper">
 
     <resultMap type="com.sochina.demo.domain.SochinaUser" id="SochinaUserResult">
         <id column="userId" property="user_id"/>
@@ -20,4 +20,18 @@
         <result column="updateBy" property="update_by"/>
         <result column="updateTime" property="update_time"/>
     </resultMap>
+
+    <select id="isExist" resultType="int">
+        select exists(
+        select user_id from sochina_user
+        <where>
+            <if test="account != null and account !=''">
+                and account = #{account}
+            </if>
+            <if test="userId != null and userId !=''">
+                and user_id = #{userId}
+            </if>
+        </where>
+        )
+    </select>
 </mapper> 

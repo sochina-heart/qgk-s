@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.sochina.demo.domain.Application">
+<mapper namespace="com.sochina.demo.mapper.ApplicationMapper">
 
     <resultMap type="com.sochina.demo.domain.Application" id="ApplicationResult">
         <id column="appId" property="app_id"/>

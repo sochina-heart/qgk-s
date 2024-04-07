@@ -113,9 +113,9 @@ class ApplicationHandler(
         return QueryWrapper<Application>()
             .eq("delete_flag", "0")
             .apply {
-                application.state?.let { eq("state", it) }
-                application.appName?.let { like("app_name", it) }
-                application.appUser?.let { like("app_user", it) }
+                application.state.takeIf { !it.isNullOrBlank() }?.let { eq("state", it) }
+                application.appName.takeIf { !it.isNullOrBlank() }?.let { like("app_name", it) }
+                application.appUser.takeIf { !it.isNullOrBlank() }?.let { like("app_user", it) }
             }
             .orderByDesc("update_time")
     }

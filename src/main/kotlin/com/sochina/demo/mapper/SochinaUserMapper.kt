@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface SochinaUserMapper : BaseMapper<SochinaUser> {
+
+    fun isExist(sochinaUser: SochinaUser): Int
 }

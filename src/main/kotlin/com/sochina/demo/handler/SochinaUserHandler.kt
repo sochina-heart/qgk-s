@@ -49,11 +49,11 @@ class SochinaUserHandler(
         val queryWrapper = QueryWrapper<SochinaUser>()
             .eq("delete_flag", "0")
             .apply {
-                sochinaUser.account?.let { like("account", it) }
-                sochinaUser.userName?.let { like("user_name", it) }
-                sochinaUser.userEmail?.let { like("user_email", it) }
-                sochinaUser.homeAddress?.let { like("home_address", it) }
-                sochinaUser.sex?.let { eq("sex", it) }
+                sochinaUser.account.takeIf { !it.isNullOrBlank() }?.let { like("account", it) }
+                sochinaUser.userName.takeIf { !it.isNullOrBlank() }?.let { like("user_name", it) }
+                sochinaUser.userEmail.takeIf { !it.isNullOrBlank() }?.let { like("user_email", it) }
+                sochinaUser.homeAddress.takeIf { !it.isNullOrBlank() }?.let { like("home_address", it) }
+                sochinaUser.sex.takeIf { !it.isNullOrBlank() }?.let { eq("sex", it) }
             }
             .orderByDesc("update_time")
             .select("user_id", "account", "user_name", "sex", "user_email", "home_address", "personal_description")
@@ -66,12 +66,11 @@ class SochinaUserHandler(
     }
 
     fun addUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(QueryWrapper<SochinaUser>().eq("account", sochinaUser.account))
         return uni {
             when {
-                (count > 0) -> AjaxResult.error("user has already")
                 sochinaUser.userPassword.isNullOrEmpty() -> AjaxResult.error("user password is empty")
                 (PasswordUtils.validate(sochinaUser.userPassword!!) < 4) -> AjaxResult.error("user password is weak password")
+                (baseMapper.isExist(sochinaUser) > 0) -> AjaxResult.error("user has already")
                 else -> {
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
@@ -84,11 +83,8 @@ class SochinaUserHandler(
     }
 
     fun updateUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(
-            QueryWrapper<SochinaUser>().eq("account", sochinaUser.account).notIn("user_id", sochinaUser.userId)
-        )
         return uni {
-            if (count > 0) {
+            if (baseMapper.isExist(sochinaUser) > 0) {
                 AjaxResult.success("user has already")
             } else {
                 AjaxResult.toAjax(baseMapper.updateById(sochinaUser))

@@ -107,9 +107,9 @@ class ResourceHandler(
         return QueryWrapper<Resource>()
             .eq("delete_flag", "0")
             .apply {
-                resource.appId?.let { eq("app_id", it) }
-                resource.resourceName?.let { like("resource_name", it) }
-                resource.menuType?.let { eq("menu_type", it) }
+                resource.appId.takeIf { !it.isNullOrBlank() }?.let { eq("app_id", it) }
+                resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
+                resource.menuType.takeIf { !it.isNullOrBlank() }?.let { eq("menu_type", it) }
             }
             .orderByDesc("update_time")
     }
