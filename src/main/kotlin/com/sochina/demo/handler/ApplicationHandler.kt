@@ -60,18 +60,27 @@ class ApplicationHandler(
     @POST
     @Path("/list")
     fun listApplication(application: Application): Uni<AjaxResult> {
+        val queryWrapper = QueryWrapper<Application>()
+            .eq("delete_flag", "0")
+            .apply {
+                application.state.takeIf { !it.isNullOrBlank() }?.let { eq("state", it) }
+                application.appName.takeIf { !it.isNullOrBlank() }?.let { like("app_name", it) }
+                application.appUser.takeIf { !it.isNullOrBlank() }?.let { like("app_user", it) }
+            }
+            .select("app_id", "app_name", "app_user", "app_email", "app_phone", "state")
+            .orderByDesc("update_time")
         val list =
             baseMapper.selectPage(
                 application.page?.let { Page(it.pageNumber.toLong(), it.pageSize.toLong()) },
-                commonQuery(application).select("app_id", "app_name", "app_user", "app_email", "app_phone", "state")
+                queryWrapper
             )
         return uni { AjaxResult.success(list) }
     }
 
     @POST
     @Path("/map")
-    fun mapApplication(application: Application): Uni<AjaxResult> {
-        return uni { AjaxResult.success(baseMapper.selectList(commonQuery(application).select("app_id", "app_name"))) }
+    fun mapApplication(): Uni<AjaxResult> {
+        return uni { AjaxResult.success(baseMapper.appMap()) }
     }
 
     fun addApp(application: Application): Uni<AjaxResult> {
@@ -89,7 +98,9 @@ class ApplicationHandler(
     }
 
     fun updateApp(application: Application): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(QueryWrapper<Application>().eq("app_name", application.appName).notIn("app_id", application.appId))
+        val count = baseMapper.selectCount(
+            QueryWrapper<Application>().eq("app_name", application.appName).notIn("app_id", application.appId)
+        )
         return uni {
             if (count > 0) {
                 AjaxResult.error("application has already exist")
@@ -107,16 +118,5 @@ class ApplicationHandler(
         } else {
             updateApp(application)
         }
-    }
-
-    private fun commonQuery(application: Application): QueryWrapper<Application> {
-        return QueryWrapper<Application>()
-            .eq("delete_flag", "0")
-            .apply {
-                application.state.takeIf { !it.isNullOrBlank() }?.let { eq("state", it) }
-                application.appName.takeIf { !it.isNullOrBlank() }?.let { like("app_name", it) }
-                application.appUser.takeIf { !it.isNullOrBlank() }?.let { like("app_user", it) }
-            }
-            .orderByDesc("update_time")
     }
 }

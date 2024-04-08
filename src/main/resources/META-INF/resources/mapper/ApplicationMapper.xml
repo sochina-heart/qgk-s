@@ -17,4 +17,12 @@
         <result column="updateBy" property="update_by"/>
         <result column="updateTime" property="update_time"/>
     </resultMap>
+
+    <select id="appMap" resultType="map">
+        select app_id as id, app_name as name
+        from sochina_app
+        where state = "0"
+          and delete_flag = "0"
+        order by name asc
+    </select>
 </mapper> 

@@ -11,6 +11,7 @@ import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.transaction.Transactional
+import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
@@ -43,6 +44,7 @@ class ResourceHandler(
     fun getResource(@PathParam("id") id: String): Uni<AjaxResult> {
         return uni {
             if (id.isBlank()) {
+                logger.warning("resource id is empty")
                 AjaxResult.error("resource id is empty")
             } else {
                 AjaxResult.success(baseMapper.selectById(id))
@@ -72,6 +74,7 @@ class ResourceHandler(
         val count = baseMapper.selectCount(QueryWrapper<Resource>().eq("perms", resource.perms))
         return uni {
             if (count > 0) {
+                logger.warning("resource ${resource.resourceName} has already exist")
                 AjaxResult.error("resource has already exist")
             } else {
                 resource.resourceId = UuidUtils.fastSimpleUUID()
@@ -86,7 +89,8 @@ class ResourceHandler(
         val count = baseMapper.selectCount(QueryWrapper<Resource>().eq("perms", resource.perms).notIn("resource_id", resource.resourceId))
         return uni {
             if (count > 0) {
-                AjaxResult.success("user has already")
+                logger.warning("resource ${resource.resourceName} has already exist")
+                AjaxResult.success("resource has already")
             } else {
                 AjaxResult.toAjax(baseMapper.updateById(resource))
             }
@@ -95,7 +99,7 @@ class ResourceHandler(
 
     @POST
     @Path("/save")
-    fun saveResource(resource: Resource): Uni<AjaxResult> {
+    fun saveResource(@Valid resource: Resource): Uni<AjaxResult> {
         return if (resource.resourceId.isNullOrBlank()) {
             addResource(resource)
         } else {
@@ -106,10 +110,10 @@ class ResourceHandler(
     private fun commonQuery(resource: Resource): QueryWrapper<Resource> {
         return QueryWrapper<Resource>()
             .eq("delete_flag", "0")
+            .eq("menu_type", resource.menuType)
+            .eq("app_id", resource.appId)
             .apply {
-                resource.appId.takeIf { !it.isNullOrBlank() }?.let { eq("app_id", it) }
                 resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
-                resource.menuType.takeIf { !it.isNullOrBlank() }?.let { eq("menu_type", it) }
             }
             .orderByDesc("update_time")
     }

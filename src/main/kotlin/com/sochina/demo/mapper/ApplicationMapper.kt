@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface ApplicationMapper: BaseMapper<Application> {
+
+    fun appMap(): List<Map<String, String>>
 }

@@ -25,10 +25,10 @@
         select exists(
         select user_id from sochina_user
         <where>
-            <if test="account != null and account !=''">
+            <if test="account != null and account != ''">
                 and account = #{account}
             </if>
-            <if test="userId != null and userId !=''">
+            <if test="userId != null and userId != ''">
                 and user_id = #{userId}
             </if>
         </where>
