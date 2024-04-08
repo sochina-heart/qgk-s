@@ -3,7 +3,7 @@ package com.sochina.demo.utils.encrypt.gm.sm2
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.math.BigInteger
-import java.util.*
+import java.util.Arrays
 
 object SM2Helper {
     private val HEX_DIGITS = charArrayOf(

@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.annotation.TableField
 import com.fasterxml.jackson.annotation.JsonFormat
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.image.BufferedImage
-import java.util.*
+import java.util.Date
 
 open class BaseDomain {
 

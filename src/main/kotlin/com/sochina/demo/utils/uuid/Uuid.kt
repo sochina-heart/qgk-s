@@ -4,7 +4,7 @@ import java.io.Serializable
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.security.SecureRandom
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ThreadLocalRandom
 
 class Uuid : Serializable, Comparable<Uuid> {
