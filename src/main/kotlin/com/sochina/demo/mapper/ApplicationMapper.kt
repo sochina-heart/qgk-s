@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Mapper
 interface ApplicationMapper: BaseMapper<Application> {
 
     fun appMap(): List<Map<String, String>>
+
+    fun isExist(application: Application): Int
 }

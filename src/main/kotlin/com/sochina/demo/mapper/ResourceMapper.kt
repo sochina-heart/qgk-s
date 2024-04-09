@@ -6,4 +6,6 @@ import org.apache.ibatis.annotations.Mapper
 
 @Mapper
 interface ResourceMapper: BaseMapper<Resource> {
+
+    fun isExist(resource: Resource): Int
 }

@@ -70,40 +70,31 @@ class ResourceHandler(
         }
     }
 
-    fun addResource(resource: Resource): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(QueryWrapper<Resource>().eq("perms", resource.perms))
-        return uni {
-            if (count > 0) {
-                logger.warning("resource ${resource.resourceName} has already exist")
-                AjaxResult.error("resource has already exist")
-            } else {
-                resource.resourceId = UuidUtils.fastSimpleUUID()
-                resource.createTime = Date()
-                resource.deleteFlag = "0"
-                AjaxResult.success(baseMapper.insert(resource))
-            }
-        }
+    fun addResource(resource: Resource): AjaxResult {
+        resource.resourceId = UuidUtils.fastSimpleUUID()
+        resource.createTime = Date()
+        resource.deleteFlag = "0"
+        return AjaxResult.success(baseMapper.insert(resource))
     }
 
-    fun updateResource(resource: Resource): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(QueryWrapper<Resource>().eq("perms", resource.perms).notIn("resource_id", resource.resourceId))
-        return uni {
-            if (count > 0) {
-                logger.warning("resource ${resource.resourceName} has already exist")
-                AjaxResult.success("resource has already")
-            } else {
-                AjaxResult.toAjax(baseMapper.updateById(resource))
-            }
-        }
+    fun updateResource(resource: Resource): AjaxResult {
+        return AjaxResult.toAjax(baseMapper.updateById(resource))
     }
 
     @POST
     @Path("/save")
     fun saveResource(@Valid resource: Resource): Uni<AjaxResult> {
-        return if (resource.resourceId.isNullOrBlank()) {
-            addResource(resource)
-        } else {
-            updateResource(resource)
+        return uni {
+            if (baseMapper.isExist(resource) > 0) {
+                logger.warning("resource ${resource.resourceName} has already exist")
+                AjaxResult.success("resource has already")
+            } else {
+                if (resource.resourceId.isNullOrBlank()) {
+                    addResource(resource)
+                } else {
+                    updateResource(resource)
+                }
+            }
         }
     }
 

@@ -23,4 +23,18 @@
         <result column="updateBy" property="update_by"/>
         <result column="updateTime" property="update_time"/>
     </resultMap>
+
+    <select id="isExist" resultType="int">
+        select exists(
+        select resource_id from sochina_resource
+        <where>
+            <if test="resourceName != null and resourceName != ''">
+                and resource_name = #{resourceName}
+            </if>
+            <if test="resourceId != null and resourceId != ''">
+                and resource_id = #{resourceId}
+            </if>
+        </where>
+        )
+    </select>
 </mapper> 

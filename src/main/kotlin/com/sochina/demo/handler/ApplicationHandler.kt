@@ -65,7 +65,6 @@ class ApplicationHandler(
             .apply {
                 application.state.takeIf { !it.isNullOrBlank() }?.let { eq("state", it) }
                 application.appName.takeIf { !it.isNullOrBlank() }?.let { like("app_name", it) }
-                application.appUser.takeIf { !it.isNullOrBlank() }?.let { like("app_user", it) }
             }
             .select("app_id", "app_name", "app_user", "app_email", "app_phone", "state")
             .orderByDesc("update_time")
@@ -83,40 +82,30 @@ class ApplicationHandler(
         return uni { AjaxResult.success(baseMapper.appMap()) }
     }
 
-    fun addApp(application: Application): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(QueryWrapper<Application>().eq("app_name", application.appName))
-        return uni {
-            if (count > 0) {
-                AjaxResult.error("application has already exist")
-            } else {
-                application.appId = UuidUtils.fastSimpleUUID()
-                application.createTime = Date()
-                application.deleteFlag = "0"
-                AjaxResult.toAjax(baseMapper.insert(application))
-            }
-        }
+    fun addApp(application: Application): AjaxResult {
+        application.appId = UuidUtils.fastSimpleUUID()
+        application.createTime = Date()
+        application.deleteFlag = "0"
+        return AjaxResult.toAjax(baseMapper.insert(application))
     }
 
-    fun updateApp(application: Application): Uni<AjaxResult> {
-        val count = baseMapper.selectCount(
-            QueryWrapper<Application>().eq("app_name", application.appName).notIn("app_id", application.appId)
-        )
-        return uni {
-            if (count > 0) {
-                AjaxResult.error("application has already exist")
-            } else {
-                AjaxResult.toAjax(baseMapper.updateById(application))
-            }
-        }
+    fun updateApp(application: Application): AjaxResult {
+        return AjaxResult.toAjax(baseMapper.updateById(application))
     }
 
     @POST
     @Path("/save")
     fun saveApplication(@Valid application: Application): Uni<AjaxResult> {
-        return if (application.appId.isNullOrBlank()) {
-            addApp(application)
-        } else {
-            updateApp(application)
+        return uni {
+            if (baseMapper.isExist(application) > 0) {
+                AjaxResult.error("application has already exist")
+            } else {
+                if (application.appId.isNullOrBlank()) {
+                    addApp(application)
+                } else {
+                    updateApp(application)
+                }
+            }
         }
     }
 }

@@ -25,4 +25,18 @@
           and delete_flag = "0"
         order by name asc
     </select>
+
+    <select id="isExist" resultType="int">
+        select exists(
+        select app_id from sochina_app
+        <where>
+            <if test="appName != null and appName != ''">
+                and app_name = #{appName}
+            </if>
+            <if test="appId != null and appId != ''">
+                and app_id = #{appId}
+            </if>
+        </where>
+        )
+    </select>
 </mapper> 
