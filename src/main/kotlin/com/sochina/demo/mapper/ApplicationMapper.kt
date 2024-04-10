@@ -10,4 +10,6 @@ interface ApplicationMapper: BaseMapper<Application> {
     fun appMap(): List<Map<String, String>>
 
     fun isExist(application: Application): Int
+
+    fun removeBatchById(list: List<String>): Int
 }

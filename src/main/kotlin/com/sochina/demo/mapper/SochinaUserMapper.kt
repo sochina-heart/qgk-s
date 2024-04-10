@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Mapper
 interface SochinaUserMapper : BaseMapper<SochinaUser> {
 
     fun isExist(sochinaUser: SochinaUser): Int
+
+    fun removeBatchById(list: List<String>): Int
 }

@@ -104,19 +104,13 @@ class SochinaUserHandler(
 
     @POST
     @Path("/remove")
-    @Transactional
     fun removeUser(ids: Ids): Uni<AjaxResult> {
         return uni {
             if (ids.ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                ids.ids.forEach {
-                    baseMapper.update(
-                        UpdateWrapper<SochinaUser>().set("delete_flag", "1").eq("user_id", it)
-                    )
-                }
+                AjaxResult.toAjax(baseMapper.removeBatchById(ids.ids))
             }
-            AjaxResult.success()
         }
     }
 }

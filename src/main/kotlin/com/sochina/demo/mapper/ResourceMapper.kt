@@ -8,4 +8,6 @@ import org.apache.ibatis.annotations.Mapper
 interface ResourceMapper: BaseMapper<Resource> {
 
     fun isExist(resource: Resource): Int
+
+    fun removeBatchById(list: List<String>): Int
 }

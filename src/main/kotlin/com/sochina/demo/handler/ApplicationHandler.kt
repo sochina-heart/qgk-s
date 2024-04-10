@@ -41,19 +41,13 @@ class ApplicationHandler(
 
     @POST
     @Path("/remove")
-    @Transactional
     fun removeApplication(ids: Ids): Uni<AjaxResult> {
         return uni {
             if (ids.ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                ids.ids.forEach {
-                    baseMapper.update(
-                        UpdateWrapper<Application>().set("delete_flag", "1").eq("app_id", it)
-                    )
-                }
+                AjaxResult.toAjax(baseMapper.removeBatchById(ids.ids))
             }
-            AjaxResult.success()
         }
     }
 

@@ -29,10 +29,19 @@ class ResourceHandler(
     @POST
     @Path("/list")
     fun listResource(resource: Resource): Uni<AjaxResult> {
+        val queryWrapper = QueryWrapper<Resource>()
+            .eq("delete_flag", "0")
+            .eq("menu_type", resource.menuType)
+            .eq("app_id", resource.appId)
+            .apply {
+                resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
+            }
+            .select("resource_id", "resource_name", "perms", "is_cache", "is_frame")
+            .orderByDesc("update_time")
         val list =
             baseMapper.selectPage(
                 resource.page?.let { Page(it.pageNumber.toLong(), it.pageSize.toLong()) },
-                commonQuery(resource).select("resource_id", "resource_name", "perms")
+                queryWrapper
             )
         return uni {
             AjaxResult.success(list)
@@ -54,19 +63,13 @@ class ResourceHandler(
 
     @POST
     @Path("/remove")
-    @Transactional
     fun removeResource(ids: Ids): Uni<AjaxResult> {
         return uni {
             if (ids.ids.isEmpty()) {
                 AjaxResult.success()
             } else {
-                ids.ids.forEach {
-                    baseMapper.update(
-                        UpdateWrapper<Resource>().set("delete_flag", "1").eq("resource_id", it)
-                    )
-                }
+                AjaxResult.toAjax(baseMapper.removeBatchById(ids.ids))
             }
-            AjaxResult.success()
         }
     }
 
@@ -96,16 +99,5 @@ class ResourceHandler(
                 }
             }
         }
-    }
-
-    private fun commonQuery(resource: Resource): QueryWrapper<Resource> {
-        return QueryWrapper<Resource>()
-            .eq("delete_flag", "0")
-            .eq("menu_type", resource.menuType)
-            .eq("app_id", resource.appId)
-            .apply {
-                resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
-            }
-            .orderByDesc("update_time")
     }
 }

@@ -34,4 +34,11 @@
         </where>
         )
     </select>
+
+    <update id="removeBatchById" parameterType="list">
+        update sochina_user set delete_flag = "1" where user_id in
+        <foreach collection="list" open="(" separator="," close=")" item="item">
+            #{item}
+        </foreach>
+    </update>
 </mapper> 
