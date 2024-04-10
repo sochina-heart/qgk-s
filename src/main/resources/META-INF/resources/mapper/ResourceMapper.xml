@@ -5,23 +5,23 @@
 <mapper namespace="com.sochina.demo.mapper.ResourceMapper">
 
     <resultMap type="com.sochina.demo.domain.Resource" id="ResourceResult">
-        <id column="resourceId" property="resource_id"/>
-        <result column="resourceName" property="resource_name"/>
-        <result column="appId" property="app_id"/>
-        <result column="path" property="path"/>
-        <result column="component" property="component"/>
-        <result column="perms" property="perms"/>
-        <result column="isFrame" property="is_frame"/>
-        <result column="isCache" property="is_cache"/>
-        <result column="menuType" property="menu_type"/>
-        <result column="visible" property="visible"/>
-        <result column="orderNum" property="order_num"/>
-        <result column="state" property="state"/>
-        <result column="deleteFlag" property="delete_flag"/>
-        <result column="createBy" property="create_by"/>
-        <result column="createTime" property="create_time"/>
-        <result column="updateBy" property="update_by"/>
-        <result column="updateTime" property="update_time"/>
+        <id property="resourceId" column="resource_id"/>
+        <result property="resourceName" column="resource_name"/>
+        <result property="appId" column="app_id"/>
+        <result property="path" column="path"/>
+        <result property="component" column="component"/>
+        <result property="perms" column="perms"/>
+        <result property="frame" column="frame"/>
+        <result property="cache" column="cache"/>
+        <result property="menuType" column="menu_type"/>
+        <result property="visible" column="visible"/>
+        <result property="orderNum" column="order_num"/>
+        <result property="state" column="state"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <select id="isExist" resultType="int">

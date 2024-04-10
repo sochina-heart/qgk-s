@@ -3,6 +3,8 @@ package com.sochina.demo.domain
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties
+import com.fasterxml.jackson.annotation.JsonProperty
 
 @TableName("sochina_resource")
 class Resource: BaseDomain() {
@@ -22,11 +24,9 @@ class Resource: BaseDomain() {
 
     var perms: String? = null
 
-    @TableField("is_frame")
-    var isFrame: String? = null
+    var frame: String? = null
 
-    @TableField("is_cache")
-    var isCache: String? = null
+    var cache: String? = null
 
     @TableField("menu_type")
     var menuType: String? = null

@@ -25,6 +25,7 @@ dependencies {
     implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("io.quarkiverse.mybatis:quarkus-mybatis-plus:2.2.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("io.quarkus:quarkus-rest-jsonb")
     implementation("io.quarkus:quarkus-arc")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")

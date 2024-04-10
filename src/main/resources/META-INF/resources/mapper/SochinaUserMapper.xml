@@ -5,20 +5,20 @@
 <mapper namespace="com.sochina.demo.mapper.SochinaUserMapper">
 
     <resultMap type="com.sochina.demo.domain.SochinaUser" id="SochinaUserResult">
-        <id column="userId" property="user_id"/>
-        <result column="account" property="account"/>
-        <result column="userName" property="user_name"/>
-        <result column="userPassword" property="user_password"/>
-        <result column="sex" property="sex"/>
-        <result column="userEmail" property="user_email"/>
-        <result column="homeAddress" property="home_address"/>
-        <result column="personalDescription" property="personal_description"/>
-        <result column="state" property="state"/>
-        <result column="deleteFlag" property="delete_flag"/>
-        <result column="createBy" property="create_by"/>
-        <result column="createTime" property="create_time"/>
-        <result column="updateBy" property="update_by"/>
-        <result column="updateTime" property="update_time"/>
+        <id property="userId" column="user_id"/>
+        <result property="account" column="account"/>
+        <result property="userName" column="user_name"/>
+        <result property="userPassword" column="user_password"/>
+        <result property="sex" column="sex"/>
+        <result property="userEmail" column="user_email"/>
+        <result property="homeAddress" column="home_address"/>
+        <result property="personalDescription" column="personal_description"/>
+        <result property="state" column="state"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <select id="isExist" resultType="int">

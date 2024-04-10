@@ -5,17 +5,17 @@
 <mapper namespace="com.sochina.demo.mapper.ApplicationMapper">
 
     <resultMap type="com.sochina.demo.domain.Application" id="ApplicationResult">
-        <id column="appId" property="app_id"/>
-        <result column="appName" property="app_name"/>
-        <result column="appUser" property="app_user"/>
-        <result column="appPhone" property="app_phone"/>
-        <result column="appEmail" property="app_email"/>
-        <result column="state" property="state"/>
-        <result column="deleteFlag" property="delete_flag"/>
-        <result column="createBy" property="create_by"/>
-        <result column="createTime" property="create_time"/>
-        <result column="updateBy" property="update_by"/>
-        <result column="updateTime" property="update_time"/>
+        <id property="appId" column="app_id"/>
+        <result property="appName" column="app_name"/>
+        <result property="appUser" column="app_user"/>
+        <result property="appPhone" column="app_phone"/>
+        <result property="appEmail" column="app_email"/>
+        <result property="state" column="state"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <select id="appMap" resultType="map">
