@@ -36,7 +36,6 @@ class ResourceHandler(
             .apply {
                 resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
             }
-            .select("resource_id", "resource_name", "perms", "is_cache", "is_frame")
             .orderByDesc("update_time")
         val list =
             baseMapper.selectPage(
