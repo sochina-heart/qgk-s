@@ -42,7 +42,7 @@
 
     <update id="changeState">
         update sochina_app set state = #{state} where app_id = #{appId}
-    </update>"
+    </update>
 
     <update id="removeBatchById" parameterType="list">
         <foreach collection="list" separator=";" item="item">
