@@ -7,6 +7,8 @@ import org.apache.ibatis.annotations.Mapper
 @Mapper
 interface SochinaUserMapper : BaseMapper<SochinaUser> {
 
+    fun changeState(sochinaUser: SochinaUser): Int
+
     fun isExist(sochinaUser: SochinaUser): Int
 
     fun removeBatchById(list: List<String>): Int

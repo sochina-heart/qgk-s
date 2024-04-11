@@ -113,4 +113,10 @@ class SochinaUserHandler(
             }
         }
     }
+
+    @POST
+    @Path("/changeState")
+    fun changeState(sochinaUser: SochinaUser): Uni<AjaxResult> {
+        return uni { AjaxResult.toAjax(baseMapper.changeState(sochinaUser)) }
+    }
 }

@@ -102,4 +102,12 @@ class ApplicationHandler(
             }
         }
     }
+
+    @POST
+    @Path("/changeState")
+    fun changeState(application: Application): Uni<AjaxResult> {
+        return uni {
+            AjaxResult.toAjax(baseMapper.changeState(application))
+        }
+    }
 }

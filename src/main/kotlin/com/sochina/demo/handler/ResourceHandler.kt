@@ -99,4 +99,10 @@ class ResourceHandler(
             }
         }
     }
+
+    @POST
+    @Path("/changeState")
+    fun changeState(resource: Resource): Uni<AjaxResult> {
+        return uni { AjaxResult.toAjax(baseMapper.changeState(resource)) }
+    }
 }

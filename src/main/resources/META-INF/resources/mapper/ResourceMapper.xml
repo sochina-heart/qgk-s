@@ -38,10 +38,13 @@
         )
     </select>
 
+    <update id="changeState">
+        update sochina_resource set state = #{state} where resource_id = #{resourceId}
+    </update>
+
     <update id="removeBatchById" parameterType="list">
-        update sochina_resource set delete_flag = "1" where resource_id in
-        <foreach collection="list" open="(" separator="," close=")" item="item">
-            #{item}
+        <foreach collection="list" separator=";" item="item">
+            update sochina_resource set delete_flag = "1" where resource_id = #{item}
         </foreach>
     </update>
 </mapper> 
