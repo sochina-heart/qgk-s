@@ -1,7 +1,6 @@
 package com.sochina.demo.handler
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.Resource
@@ -10,7 +9,6 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -46,6 +44,19 @@ class ResourceHandler(
         return uni {
             AjaxResult.success(list)
         }
+    }
+
+    @GET
+    @Path("/listNoPage")
+    fun listResourceNoPage(appId: String): Uni<AjaxResult> {
+        return uni {
+            val queryWrapper = QueryWrapper<Resource>()
+                .eq("app_id", appId)
+                .eq("state", "0")
+                .eq("delete_flag", "0")
+                .`in`("menu_type", listOf("M", "C"))
+                .select("resource_id", "resource_name", "parent_id", "order_num", "menu_type")
+            AjaxResult.success(baseMapper.selectList(queryWrapper)) }
     }
 
     @GET
