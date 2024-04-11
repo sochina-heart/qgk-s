@@ -36,6 +36,7 @@ class ResourceHandler(
             .apply {
                 resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
             }
+            .select("resource_id", "resource_name", "app_id", "path", "component", "state", "menu_type")
             .orderByDesc("update_time")
         val list =
             baseMapper.selectPage(
