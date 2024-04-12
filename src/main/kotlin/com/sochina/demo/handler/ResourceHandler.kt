@@ -10,10 +10,13 @@ import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.validation.Valid
+import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.Produces
+import jakarta.ws.rs.QueryParam
 import java.util.Date
 import java.util.logging.Logger
 
@@ -48,13 +51,19 @@ class ResourceHandler(
 
     @GET
     @Path("/listNoPage")
-    fun listResourceNoPage(appId: String): Uni<AjaxResult> {
+    fun listResourceNoPage(@QueryParam("appId") appId: String, @QueryParam("menuType") menuType: String): Uni<AjaxResult> {
         return uni {
             val queryWrapper = QueryWrapper<Resource>()
                 .eq("app_id", appId)
                 .eq("state", "0")
                 .eq("delete_flag", "0")
-                .`in`("menu_type", listOf("M", "C"))
+                .also {
+                    if (menuType == "C") {
+                        it.`in`("menu_type", "C", "F")
+                    } else {
+                        it.eq("menu_type", "M")
+                    }
+                }
                 .select("resource_id", "resource_name", "parent_id", "order_num", "menu_type")
             AjaxResult.success(baseMapper.selectList(queryWrapper)) }
     }
