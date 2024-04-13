@@ -58,8 +58,8 @@ class ResourceHandler(
                 .eq("state", "0")
                 .eq("delete_flag", "0")
                 .also {
-                    if (menuType == "C") {
-                        it.`in`("menu_type", "C", "F")
+                    if (menuType == "F") {
+                        it.`in`("menu_type", "M", "C")
                     } else {
                         it.eq("menu_type", "M")
                     }
