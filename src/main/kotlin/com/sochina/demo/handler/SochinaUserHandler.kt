@@ -38,7 +38,7 @@ class SochinaUserHandler(
                 AjaxResult.error("user id is empty")
             }
             val user = baseMapper.selectById(id)
-            user.userPassword = null
+            user.userPassword = ""
             AjaxResult.success(user)
         }
     }
@@ -49,11 +49,11 @@ class SochinaUserHandler(
         val queryWrapper = QueryWrapper<SochinaUser>()
             .eq("delete_flag", "0")
             .apply {
-                sochinaUser.account.takeIf { !it.isNullOrBlank() }?.let { like("account", it) }
-                sochinaUser.userName.takeIf { !it.isNullOrBlank() }?.let { like("user_name", it) }
-                sochinaUser.userEmail.takeIf { !it.isNullOrBlank() }?.let { like("user_email", it) }
-                sochinaUser.homeAddress.takeIf { !it.isNullOrBlank() }?.let { like("home_address", it) }
-                sochinaUser.sex.takeIf { !it.isNullOrBlank() }?.let { eq("sex", it) }
+                sochinaUser.account.takeIf { it.isNotBlank() }?.let { like("account", it) }
+                sochinaUser.userName.takeIf { it.isNotBlank() }?.let { like("user_name", it) }
+                sochinaUser.userEmail.takeIf { it.isNotBlank() }?.let { like("user_email", it) }
+                sochinaUser.homeAddress.takeIf { it.isNotBlank() }?.let { like("home_address", it) }
+                sochinaUser.sex.takeIf { it.isNotBlank() }?.let { eq("sex", it) }
             }
             .orderByDesc("update_time")
             .select("user_id", "account", "user_name", "sex", "user_email", "home_address", "personal_description")
@@ -68,14 +68,14 @@ class SochinaUserHandler(
     fun addUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
         return uni {
             when {
-                sochinaUser.userPassword.isNullOrEmpty() -> AjaxResult.error("user password is empty")
-                (PasswordUtils.validate(sochinaUser.userPassword!!) < 4) -> AjaxResult.error("user password is weak password")
+                sochinaUser.userPassword.isEmpty() -> AjaxResult.error("user password is empty")
+                (PasswordUtils.validate(sochinaUser.userPassword) < 4) -> AjaxResult.error("user password is weak password")
                 (baseMapper.isExist(sochinaUser) > 0) -> AjaxResult.error("user has already")
                 else -> {
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
                     sochinaUser.deleteFlag = "0"
-                    sochinaUser.userPassword = SM3Utils.encrypt(sochinaUser.userPassword!!)
+                    sochinaUser.userPassword = SM3Utils.encrypt(sochinaUser.userPassword)
                     AjaxResult.toAjax(baseMapper.insert(sochinaUser))
                 }
             }
@@ -95,7 +95,7 @@ class SochinaUserHandler(
     @POST
     @Path("/save")
     fun saveUser(@Valid sochinaUser: SochinaUser): Uni<AjaxResult> {
-        return if (sochinaUser.userId.isNullOrEmpty()) {
+        return if (sochinaUser.userId.isEmpty()) {
             addUser(sochinaUser)
         } else {
             updateUser(sochinaUser)

@@ -11,22 +11,22 @@ import org.hibernate.validator.constraints.Length
 class Application: BaseDomain() {
 
     @TableId("app_id")
-    var appId: String? = null
+    var appId: String = ""
 
     @Length(min = 1, max = 100, message = "账号长度必须在1-100之间")
     @TableField("app_name")
-    var appName: String? = null
+    var appName: String = ""
 
     @Length(max = 1, message = "用户名长度为1")
     @TableField("app_user")
-    var appUser: String? = null
+    var appUser: String = ""
 
     @NotBlank(message = "手机号不能为空")
     @TableField("app_phone")
-    var appPhone: String? = null
+    var appPhone: String = ""
 
     @NotBlank(message = "邮箱不能为空")
     @Email(message = "邮箱格式不正确")
     @TableField("app_email")
-    var appEmail: String? = null
+    var appEmail: String = ""
 }

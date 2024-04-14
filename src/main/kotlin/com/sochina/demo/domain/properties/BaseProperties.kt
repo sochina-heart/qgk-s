@@ -7,7 +7,7 @@ open class BaseProperties {
 
     var enable: Boolean = true
 
-    var excludeUrl: MutableList<String>? = null;
+    var excludeUrl: List<String> = emptyList();
 
     var order: Int = -1
 }

@@ -1,7 +1,6 @@
 package com.sochina.demo.handler
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Application
 import com.sochina.demo.domain.Ids
@@ -10,7 +9,6 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -57,8 +55,8 @@ class ApplicationHandler(
         val queryWrapper = QueryWrapper<Application>()
             .eq("delete_flag", "0")
             .apply {
-                application.state.takeIf { !it.isNullOrBlank() }?.let { eq("state", it) }
-                application.appName.takeIf { !it.isNullOrBlank() }?.let { like("app_name", it) }
+                application.state.takeIf { it.isNotBlank() }?.let { eq("state", it) }
+                application.appName.takeIf { it.isNotBlank() }?.let { like("app_name", it) }
             }
             .select("app_id", "app_name", "app_user", "app_email", "app_phone", "state")
             .orderByDesc("update_time")
@@ -94,7 +92,7 @@ class ApplicationHandler(
             if (baseMapper.isExist(application) > 0) {
                 AjaxResult.error("application has already exist")
             } else {
-                if (application.appId.isNullOrBlank()) {
+                if (application.appId.isBlank()) {
                     addApp(application)
                 } else {
                     updateApp(application)

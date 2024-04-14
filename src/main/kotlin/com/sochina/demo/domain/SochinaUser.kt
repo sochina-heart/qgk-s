@@ -12,31 +12,31 @@ import org.hibernate.validator.constraints.Length
 class SochinaUser : BaseDomain() {
 
     @TableId("user_id")
-    var userId: String? = null
+    var userId: String = ""
 
     @Length(min = 1, max = 100, message = "账号长度必须在1-100之间")
-    var account: String? = null
+    var account: String = ""
 
     @Length(min = 1, max = 100, message = "用户名长度必须在1-100之间")
     @TableField("user_name")
-    var userName: String? = null
+    var userName: String = ""
 
     @TableField("user_password")
-    var userPassword: String? = null
+    var userPassword: String = ""
 
     @Length(max = 1, message = "性别长度为1")
-    var sex: String? = null
+    var sex: String = ""
 
     @NotBlank(message = "邮箱不能为空")
     @Email(message = "邮箱格式不正确")
     @TableField("user_email")
-    var userEmail: String? = null
+    var userEmail: String = ""
 
     @Length(max = 255, message = "地址长度不能超过255")
     @TableField("home_address")
-    var homeAddress: String? = null
+    var homeAddress: String = ""
 
     @Length(max = 255, message = "个人描述长度不能超过255")
     @TableField("personal_description")
-    var personalDescription: String? = null
+    var personalDescription: String = ""
 }

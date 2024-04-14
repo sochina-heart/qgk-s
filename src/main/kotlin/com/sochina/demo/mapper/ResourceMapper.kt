@@ -11,8 +11,6 @@ interface ResourceMapper: BaseMapper<Resource> {
 
     fun changeState(resource: Resource): Int
 
-    fun getTree(appId: String, menuType: String): List<ResourceVo>
-
     fun isExist(resource: Resource): Int
 
     fun removeBatchById(list: List<String>): Int

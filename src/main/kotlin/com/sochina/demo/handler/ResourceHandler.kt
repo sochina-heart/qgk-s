@@ -4,18 +4,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.Resource
+import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.validation.Valid
-import jakarta.ws.rs.Consumes
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
-import jakarta.ws.rs.Produces
 import jakarta.ws.rs.QueryParam
 import java.util.Date
 import java.util.logging.Logger
@@ -35,7 +34,7 @@ class ResourceHandler(
             .eq("menu_type", resource.menuType)
             .eq("app_id", resource.appId)
             .apply {
-                resource.resourceName.takeIf { !it.isNullOrBlank() }?.let { like("resource_name", it) }
+                resource.resourceName.takeIf { it.isNotBlank() }?.let { like("resource_name", it) }
             }
             .select("resource_id", "resource_name", "app_id", "path", "component", "state", "menu_type")
             .orderByDesc("update_time")
@@ -51,9 +50,41 @@ class ResourceHandler(
 
     @GET
     @Path("/getTree")
-    fun listResourceNoPage(@QueryParam("appId") appId: String, @QueryParam("menuType") menuType: String): Uni<AjaxResult> {
+    fun listResourceNoPage(
+        @QueryParam("appId") appId: String,
+        @QueryParam("menuType") menuType: String
+    ): Uni<AjaxResult> {
         return uni {
-            AjaxResult.success(baseMapper.getTree(appId)) }
+            val queryWrapper = QueryWrapper<Resource>()
+                .eq("app_id", appId)
+                .eq("state", "0")
+                .eq("delete_flag", "0")
+                .also {
+                    if (menuType == "F") {
+                        it.`in`("menu_type", "M", "C")
+                    } else if (menuType == "M" || menuType == "C") {
+                        it.eq("menu_type", "M")
+                    }
+                }
+                .select("resource_id", "resource_name", "parent_id", "order_num", "menu_type")
+            val list = baseMapper.selectList(queryWrapper)
+            AjaxResult.success(getResourceTree(list, "0"))
+        }
+    }
+
+    private fun getResourceTree(list: List<Resource>, parentId: String): List<ResourceVo> {
+        val result = mutableListOf<ResourceVo>()
+        list.forEach {
+            if (it.parentId == parentId) {
+                val vo = ResourceVo()
+                vo.id = it.resourceId
+                vo.label = it.resourceName
+                vo.type = it.menuType
+                vo.children = getResourceTree(list, it.resourceId)
+                result.add(vo)
+            }
+        }
+        return result
     }
 
     @GET
@@ -100,7 +131,7 @@ class ResourceHandler(
                 logger.warning("resource ${resource.resourceName} has already exist")
                 AjaxResult.success("resource has already")
             } else {
-                if (resource.resourceId.isNullOrBlank()) {
+                if (resource.resourceId.isBlank()) {
                     addResource(resource)
                 } else {
                     updateResource(resource)

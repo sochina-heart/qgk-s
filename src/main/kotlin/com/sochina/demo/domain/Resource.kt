@@ -10,31 +10,34 @@ import com.fasterxml.jackson.annotation.JsonProperty
 class Resource: BaseDomain() {
 
     @TableId("resource_id")
-    var resourceId: String? = null
+    var resourceId: String = ""
 
     @TableField("resource_name")
-    var resourceName: String? = null
+    var resourceName: String = ""
 
     @TableField("app_id")
-    var appId: String? = null
+    var appId: String = ""
 
-    var path: String? = null
+    @TableField("parent_id")
+    var parentId: String = ""
 
-    var component: String? = null
+    var path: String = ""
 
-    var perms: String? = null
+    var component: String = ""
 
-    var frame: String? = null
+    var perms: String = ""
 
-    var cache: String? = null
+    var frame: String = ""
+
+    var cache: String = ""
 
     @TableField("menu_type")
-    var menuType: String? = null
+    var menuType: String = ""
 
-    var visible: String? = null
+    var visible: String? = ""
 
     @TableField("order_num")
-    var orderNum: Int? = null
+    var orderNum: Int = 1
 }
 
 class ResourceVo {

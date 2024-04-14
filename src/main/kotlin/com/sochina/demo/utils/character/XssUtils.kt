@@ -28,7 +28,7 @@ class XssUtils private constructor(private val commonsProperties: CommonsPropert
     private var XSS_SENSITIVE_DATA: List<String>? = emptyList()
 
     init {
-        XSS_PATTERN_MAP = Optional.ofNullable(commonsProperties.xssProperties.pattern).get()
+        XSS_PATTERN_MAP = Optional.ofNullable(commonsProperties.xssProperties.pattern).get() as MutableMap<String, String>
         XSS_SENSITIVE_DATA = commonsProperties.xssProperties.sensitiveData.customSplit()
         XSS_SENSITIVE_DATA?.forEach {
             val value = CharUtils.half2Full(it)

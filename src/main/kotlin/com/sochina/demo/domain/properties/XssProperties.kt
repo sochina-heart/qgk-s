@@ -5,5 +5,5 @@ package com.sochina.demo.domain.properties
  */
 class XssProperties : BaseProperties() {
     var sensitiveData: String = ""
-    var pattern: MutableMap<String, String>? = mutableMapOf()
+    var pattern: Map<String, String> = emptyMap()
 }

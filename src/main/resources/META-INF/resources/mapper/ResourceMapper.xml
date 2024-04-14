@@ -8,6 +8,7 @@
         <id property="resourceId" column="resource_id"/>
         <result property="resourceName" column="resource_name"/>
         <result property="appId" column="app_id"/>
+        <result property="parentId" column="parent_id"/>
         <result property="path" column="path"/>
         <result property="component" column="component"/>
         <result property="perms" column="perms"/>
@@ -36,27 +37,6 @@
             </if>
         </where>
         )
-    </select>
-
-    <select id="getTree" resultType="com.sochina.demo.domain.ResourceVo">
-        select
-            resource_id as id,
-            resource_name as label,
-            menu_type as type
-        from sochina_resource
-        <where>
-            delete_flag = '0' and state = '0'
-            <if test="appId != null and appId != ''">
-                and app_id = #{appId}
-            </if>
-            <if test="menuType == '3'">
-                and menu_type in ('M','C')
-            </if>
-            <if test="menuType != '3'">
-                and menu_type = 'M'
-            </if>
-        </where>
-        order by order_num
     </select>
 
     <update id="changeState">
