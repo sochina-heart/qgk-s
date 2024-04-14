@@ -38,6 +38,27 @@
         )
     </select>
 
+    <select id="getTree" resultType="com.sochina.demo.domain.ResourceVo">
+        select
+            resource_id as id,
+            resource_name as label,
+            menu_type as type
+        from sochina_resource
+        <where>
+            delete_flag = '0' and state = '0'
+            <if test="appId != null and appId != ''">
+                and app_id = #{appId}
+            </if>
+            <if test="menuType == '3'">
+                and menu_type in ('M','C')
+            </if>
+            <if test="menuType != '3'">
+                and menu_type = 'M'
+            </if>
+        </where>
+        order by order_num
+    </select>
+
     <update id="changeState">
         update sochina_resource set state = #{state} where resource_id = #{resourceId}
     </update>

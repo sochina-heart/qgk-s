@@ -35,7 +35,14 @@ class Resource: BaseDomain() {
 
     @TableField("order_num")
     var orderNum: Int? = null
+}
 
-    @TableField(exist = false)
-    var children: List<Resource> = emptyList()
+class ResourceVo {
+    var id: String = ""
+
+    var label: String = ""
+
+    var type: String = ""
+
+    var children: List<ResourceVo> = emptyList()
 }

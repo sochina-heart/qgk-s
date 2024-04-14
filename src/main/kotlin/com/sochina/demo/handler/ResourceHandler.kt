@@ -50,22 +50,10 @@ class ResourceHandler(
     }
 
     @GET
-    @Path("/listNoPage")
+    @Path("/getTree")
     fun listResourceNoPage(@QueryParam("appId") appId: String, @QueryParam("menuType") menuType: String): Uni<AjaxResult> {
         return uni {
-            val queryWrapper = QueryWrapper<Resource>()
-                .eq("app_id", appId)
-                .eq("state", "0")
-                .eq("delete_flag", "0")
-                .also {
-                    if (menuType == "F") {
-                        it.`in`("menu_type", "M", "C")
-                    } else {
-                        it.eq("menu_type", "M")
-                    }
-                }
-                .select("resource_id", "resource_name", "parent_id", "order_num", "menu_type")
-            AjaxResult.success(baseMapper.selectList(queryWrapper)) }
+            AjaxResult.success(baseMapper.getTree(appId)) }
     }
 
     @GET
