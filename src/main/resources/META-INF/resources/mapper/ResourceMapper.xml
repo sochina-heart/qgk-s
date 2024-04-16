@@ -15,6 +15,7 @@
         <result property="frame" column="frame"/>
         <result property="cache" column="cache"/>
         <result property="menuType" column="menu_type"/>
+        <result property="ancestorList" column="ancestor_list"/>
         <result property="visible" column="visible"/>
         <result property="orderNum" column="order_num"/>
         <result property="state" column="state"/>

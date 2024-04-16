@@ -27,6 +27,9 @@ class Resource: BaseDomain() {
 
     var perms: String = ""
 
+    @TableField("ancestor_list")
+    var ancestorList = ""
+
     var frame: String = ""
 
     var cache: String = ""

@@ -68,7 +68,7 @@ class ResourceHandler(
                 }
                 .select("resource_id", "resource_name", "parent_id", "order_num", "menu_type")
             val list = baseMapper.selectList(queryWrapper)
-            AjaxResult.success(getResourceTree(list, "0"))
+            AjaxResult.success(getResourceTree(list, "topzero"))
         }
     }
 
@@ -120,6 +120,9 @@ class ResourceHandler(
     }
 
     fun updateResource(resource: Resource): AjaxResult {
+        if (resource.parentId == "topzero") {
+            return AjaxResult.success()
+        }
         return AjaxResult.toAjax(baseMapper.updateById(resource))
     }
 
