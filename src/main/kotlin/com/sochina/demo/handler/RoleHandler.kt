@@ -27,7 +27,7 @@ class RoleHandler(
 
     private val logger: Logger = Logger.getLogger(RoleHandler::class.java.name)
 
-    @POST
+    @GET
     @Path("/list")
     fun listRole(
         @QueryParam("appId") appId: String,
