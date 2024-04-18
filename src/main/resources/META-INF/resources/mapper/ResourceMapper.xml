@@ -41,7 +41,7 @@
     </select>
 
     <update id="changeState">
-        update sochina_resource set state = #{state} where resource_id = #{resourceId}
+        update sochina_resource set state = #{state} where resource_id = #{id}
     </update>
 
     <update id="removeBatchById" parameterType="list">

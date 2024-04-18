@@ -7,7 +7,6 @@ import com.sochina.demo.constants.Constants
 // Include.NON_DEFAULT 属性为默认值不序列化
 // Include.NON_EMPTY 属性为 空（""） 或者为 NULL 都不序列化
 // Include.NON_NULL 属性为NULL 不序列化
-@JsonInclude(JsonInclude.Include.NON_EMPTY)
 class AjaxResult : HashMap<String?, Any?> {
     /**
      * 初始化一个新创建的 AjaxResult 对象，使其表示一个空消息。

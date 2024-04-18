@@ -9,7 +9,7 @@ import org.apache.ibatis.annotations.Param
 @Mapper
 interface ResourceMapper: BaseMapper<Resource> {
 
-    fun changeState(resource: Resource): Int
+    fun changeState(id: String, state: String): Int
 
     fun isExist(resource: Resource): Int
 

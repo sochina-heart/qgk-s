@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.sochina.demo.mapper.RoleMapper">
+
+    <resultMap type="com.sochina.demo.domain.Role" id="RoleResult">
+        <id property="roleId" column="role_id"/>
+        <result property="roleName" column="role_name"/>
+        <result property="appId" column="app_id"/>
+        <result property="perms" column="perms"/>
+        <result property="state" column="state"/>
+        <result property="deleteFlag" column="delete_flag"/>
+        <result property="createBy" column="create_by"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateBy" column="update_by"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+    <delete id="removeRelaBatchByRoleIds">
+        <foreach collection="list" separator=";" item="item">
+            delete from sochina_role_rela_resource where role_id = #{item}
+        </foreach>
+    </delete>
+
+    <insert id="batchSaveRela" useGeneratedKeys="true">
+        insert into sochina_role_rela_resource(id, role_id, resource_id) values
+        <foreach collection="list" separator="," item="item">
+            (#{item.id}, #{item.roleId}, #{item.resourceId})
+        </foreach>
+    </insert>
+
+    <update id="changeState">
+        update sochina_role set state = #{state} where role_id = #{id}
+    </update>
+
+    <update id="removeBatchByIds">
+        <foreach collection="list" separator=";" item="item">
+            update sochina_role set delete_flag = "1" where role_id = #{item}
+        </foreach>
+    </update>
+
+    <select id="isExist" resultType="int">
+        select exists(
+        select role_id from sochina_role
+        <where>
+            <if test="roleName != null and roleName != ''">
+                and role_name = #{roleName}
+            </if>
+            <if test="roleId != null and roleId != ''">
+                and role_id = #{roleId}
+            </if>
+        </where>
+        )
+    </select>
+</mapper> 

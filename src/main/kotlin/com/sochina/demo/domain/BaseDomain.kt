@@ -2,6 +2,7 @@ package com.sochina.demo.domain
 
 import com.baomidou.mybatisplus.annotation.TableField
 import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.image.BufferedImage
 import java.util.Date
@@ -14,18 +15,18 @@ open class BaseDomain {
     var deleteFlag: String = ""
 
     @TableField("create_by")
-    var createBy: String = ""
+    var createBy: String? = null
 
     @TableField("create_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    var createTime: Date = Date()
+    var createTime: Date? = null
 
     @TableField("update_by")
-    var updateBy: String = ""
+    var updateBy: String? = null
 
     @TableField("update_time")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    var updateTime: Date = Date()
+    var updateTime: Date? = null
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @TableField(exist = false)
@@ -38,7 +39,7 @@ open class Page<T> {
 
     var pageNumber: Int = 0
 
-    var pageSize: Int = 0
+    var pageSize: Int = 10
 
     var totalPage: Long = 0
 
