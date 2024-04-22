@@ -17,7 +17,7 @@ class Application: BaseDomain() {
     @TableField("app_name")
     var appName: String = ""
 
-    @Length(max = 1, message = "用户名长度为1")
+    @Length(min = 1, max = 100, message = "用户名长度必须在1-100之间")
     @TableField("app_user")
     var appUser: String = ""
 
