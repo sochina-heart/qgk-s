@@ -34,7 +34,7 @@
                 and app_name = #{appName}
             </if>
             <if test="appId != null and appId != ''">
-                and app_id = #{appId}
+                and app_id != #{appId}
             </if>
         </where>
         )

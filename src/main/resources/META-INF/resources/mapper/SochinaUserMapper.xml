@@ -29,7 +29,7 @@
                 and account = #{account}
             </if>
             <if test="userId != null and userId != ''">
-                and user_id = #{userId}
+                and user_id != #{userId}
             </if>
         </where>
         )

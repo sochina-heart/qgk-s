@@ -48,9 +48,13 @@
                 and role_name = #{roleName}
             </if>
             <if test="roleId != null and roleId != ''">
-                and role_id = #{roleId}
+                and role_id != #{roleId}
             </if>
         </where>
         )
+    </select>
+
+    <select id="selectRelaResourceIds">
+        select resource_id from sochina_role_rela_resource where role_id = #{id}
     </select>
 </mapper> 

@@ -34,7 +34,7 @@
                 and resource_name = #{resourceName}
             </if>
             <if test="resourceId != null and resourceId != ''">
-                and resource_id = #{resourceId}
+                and resource_id != #{resourceId}
             </if>
         </where>
         )

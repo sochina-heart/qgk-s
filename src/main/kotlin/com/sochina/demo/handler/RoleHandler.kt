@@ -55,13 +55,17 @@ class RoleHandler(
                 logger.info("role id is $id")
                 AjaxResult.error("role id is empty")
             } else {
-                AjaxResult.success(baseMapper.selectById(id))
+                val role = baseMapper.selectById(id)
+                role.takeIf { it != null }?.apply {
+                    resourceIds = baseMapper.selectRelaResourceIds(id)
+                }
+                AjaxResult.success(role)
             }
         }
     }
 
     fun addRole(role: Role): AjaxResult {
-        return if (baseMapper.isExist(role.roleName, role.appId) > 0) {
+        return if (baseMapper.isExist(role.roleName, role.roleId) > 0) {
             AjaxResult.error("role has already exist")
         } else {
             role.roleId = UuidUtils.fastSimpleUUID()
@@ -73,16 +77,17 @@ class RoleHandler(
                     resourceId = it
                 }
             }.toList()
-            baseMapper.batchSaveRela(relaList)
+            relaList.takeIf { it.isNotEmpty() }?.let { baseMapper.batchSaveRela(it) }
             baseMapper.insert(role)
             return AjaxResult.success()
         }
     }
 
     fun updateRole(role: Role): AjaxResult {
-        return if (baseMapper.isExist(role.roleName, role.appId) > 0) {
+        return if (baseMapper.isExist(role.roleName, role.roleId) > 0) {
             AjaxResult.error("role has already exist")
         } else {
+            baseMapper.removeRelaBatchByRoleIds(listOf(role.roleId))
             val relaList = role.resourceIds.map {
                 RoleRelaResource().apply {
                     id = UuidUtils.fastSimpleUUID()
@@ -90,9 +95,8 @@ class RoleHandler(
                     resourceId = it
                 }
             }
-            baseMapper.removeRelaBatchByRoleIds(listOf(role.roleId))
-            baseMapper.batchSaveRela(relaList)
-            AjaxResult.success()
+            relaList.takeIf { it.isNotEmpty() }?.let { baseMapper.batchSaveRela(it) }
+            AjaxResult.toAjax(baseMapper.updateById(role))
         }
     }
 
