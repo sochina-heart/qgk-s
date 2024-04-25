@@ -1,8 +1,12 @@
 package com.sochina.demo.handler
 
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
+import com.github.benmanes.caffeine.cache.Cache
+import com.github.benmanes.caffeine.cache.Caffeine
 import com.sochina.demo.domain.Ids
+import com.sochina.demo.domain.MenuItem
 import com.sochina.demo.domain.Resource
 import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
@@ -10,7 +14,6 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
-import jakarta.annotation.Nullable
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
@@ -71,6 +74,37 @@ class ResourceHandler(
             val list = baseMapper.selectList(queryWrapper)
             AjaxResult.success(getResourceTree(list, "topzero"))
         }
+    }
+
+    @GET
+    @Path("/getRouter")
+    fun getRouter(
+        @QueryParam("appId") appId: String
+    ): Uni<AjaxResult> {
+        return uni {
+            val cache: Cache<String, List<MenuItem>> = Caffeine.newBuilder().build()
+            val router = cache.getIfPresent("router")
+            if (router != null) {
+                logger.info(router.toString())
+                return@uni AjaxResult.success(router)
+            } else {
+                val list = baseMapper.getRouter(appId)
+                val routerList = getRouterTree(list, "0")
+                cache.put("router", routerList)
+                AjaxResult.success(routerList)
+            }
+        }
+    }
+
+    private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
+        val result = mutableListOf<MenuItem>()
+        list.forEach {
+            if (it.pid == parentId) {
+                it.children = getRouterTree(list, it.id)
+                result.add(it)
+            }
+        }
+        return result
     }
 
     private fun getResourceTree(list: List<Resource>, parentId: String): List<ResourceVo> {

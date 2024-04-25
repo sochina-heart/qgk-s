@@ -10,9 +10,8 @@
         <result property="appId" column="app_id"/>
         <result property="parentId" column="parent_id"/>
         <result property="path" column="path"/>
-        <result property="component" column="component"/>
         <result property="perms" column="perms"/>
-        <result property="frame" column="frame"/>
+        <result property="redirect" column="redirect"/>
         <result property="cache" column="cache"/>
         <result property="menuType" column="menu_type"/>
         <result property="ancestorList" column="ancestor_list"/>
@@ -38,6 +37,16 @@
             </if>
         </where>
         )
+    </select>
+
+    <select id="getRouter">
+        select
+        resource_id as id,
+        resource_name as name,
+        parent_id as pid,
+        path
+        from sochina_resource where state = 0 and delete_flag = 0 and app_id = #{appId} and menu_type in('M', 'C')
+        order by order_num asc
     </select>
 
     <update id="changeState">

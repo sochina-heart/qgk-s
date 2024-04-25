@@ -1,7 +1,6 @@
 package com.sochina.demo.handler
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.SochinaUser
@@ -12,13 +11,12 @@ import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
-import jakarta.transaction.Transactional
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
-import java.util.Date
+import java.util.*
 import java.util.logging.Logger
 
 
@@ -118,5 +116,13 @@ class SochinaUserHandler(
     @Path("/changeState")
     fun changeState(sochinaUser: SochinaUser): Uni<AjaxResult> {
         return uni { AjaxResult.toAjax(baseMapper.changeState(sochinaUser)) }
+    }
+
+    @POST
+    @Path("/login")
+    fun login(sochinaUser: SochinaUser): Uni<AjaxResult> {
+        return uni {
+            AjaxResult.success()
+        }
     }
 }

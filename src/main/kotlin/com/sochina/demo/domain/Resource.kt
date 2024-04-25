@@ -23,14 +23,12 @@ class Resource: BaseDomain() {
 
     var path: String = ""
 
-    var component: String = ""
-
     var perms: String = ""
 
     @TableField("ancestor_list")
     var ancestorList = ""
 
-    var frame: String = ""
+    var redirect: String = ""
 
     var cache: String = ""
 
@@ -51,4 +49,16 @@ class ResourceVo {
     var type: String = ""
 
     var children: List<ResourceVo> = emptyList()
+}
+
+class MenuItem {
+    var id: String = ""
+
+    var pid: String = ""
+
+    var name: String = ""
+
+    var path: String = ""
+
+    var children: List<MenuItem> = emptyList()
 }

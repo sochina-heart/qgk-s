@@ -11,6 +11,9 @@ import org.hibernate.validator.constraints.Length
 @TableName("sochina_user")
 class SochinaUser : BaseDomain() {
 
+    @TableField(exist = false)
+    var appId: String = ""
+
     @TableId("user_id")
     var userId: String = ""
 
