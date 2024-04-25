@@ -1,10 +1,7 @@
 package com.sochina.demo.handler
 
-import com.arjuna.ats.internal.jdbc.drivers.modifiers.list
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
-import com.github.benmanes.caffeine.cache.Cache
-import com.github.benmanes.caffeine.cache.Caffeine
 import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.MenuItem
 import com.sochina.demo.domain.Resource
@@ -82,17 +79,9 @@ class ResourceHandler(
         @QueryParam("appId") appId: String
     ): Uni<AjaxResult> {
         return uni {
-            val cache: Cache<String, List<MenuItem>> = Caffeine.newBuilder().build()
-            val router = cache.getIfPresent("router")
-            if (router != null) {
-                logger.info(router.toString())
-                return@uni AjaxResult.success(router)
-            } else {
-                val list = baseMapper.getRouter(appId)
-                val routerList = getRouterTree(list, "0")
-                cache.put("router", routerList)
-                AjaxResult.success(routerList)
-            }
+            val list = baseMapper.getRouter(appId)
+            val routerList = getRouterTree(list, "0")
+            AjaxResult.success(routerList)
         }
     }
 

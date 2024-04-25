@@ -23,7 +23,7 @@ dependencies {
     implementation("io.quarkus:quarkus-mutiny")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("io.quarkus:quarkus-jdbc-mysql")
-    implementation("io.quarkus:quarkus-caffeine")
+    implementation("io.quarkus:quarkus-cache")
     implementation("io.quarkiverse.mybatis:quarkus-mybatis-plus:2.2.2")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-jackson")
