@@ -3,6 +3,7 @@ package com.sochina.demo.handler
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
+import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.domain.Role
 import com.sochina.demo.domain.RoleRelaResource
 import com.sochina.demo.mapper.RoleMapper
@@ -65,7 +66,7 @@ class RoleHandler(
     }
 
     fun addRole(role: Role): AjaxResult {
-        return if (baseMapper.isExist(role.roleName, role.roleId) > 0) {
+        return if (baseMapper.isExist(role.roleId, role.perms) > 0) {
             AjaxResult.error("role has already exist")
         } else {
             role.roleId = UuidUtils.fastSimpleUUID()
@@ -84,7 +85,7 @@ class RoleHandler(
     }
 
     fun updateRole(role: Role): AjaxResult {
-        return if (baseMapper.isExist(role.roleName, role.roleId) > 0) {
+        return if (baseMapper.isExist(role.roleId, role.perms) > 0) {
             AjaxResult.error("role has already exist")
         } else {
             baseMapper.removeRelaBatchByRoleIds(listOf(role.roleId))
@@ -129,15 +130,11 @@ class RoleHandler(
         }
     }
 
-    @GET
+    @POST
     @Path("/changeState")
-    fun changeState(@QueryParam("id") id: String, @QueryParam("state") state: String): Uni<AjaxResult> {
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
         return uni {
-            if (id.isBlank()) {
-                AjaxResult.error("role id is empty")
-            } else {
-                AjaxResult.toAjax(baseMapper.changeState(id, state))
-            }
+            AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state))
         }
     }
 }

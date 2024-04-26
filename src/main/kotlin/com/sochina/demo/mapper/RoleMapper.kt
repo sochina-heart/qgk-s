@@ -12,7 +12,7 @@ interface RoleMapper: BaseMapper<Role> {
 
     fun changeState(id: String, state: String): Int
 
-    fun isExist(roleName: String, roleId: String): Int
+    fun isExist(id: String, perms: String): Int
 
     fun removeBatchByIds(list: List<String>): Int
 

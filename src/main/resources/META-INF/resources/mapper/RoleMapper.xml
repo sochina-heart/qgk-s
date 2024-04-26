@@ -44,11 +44,11 @@
         select exists(
         select role_id from sochina_role
         <where>
-            <if test="roleName != null and roleName != ''">
-                and role_name = #{roleName}
+            <if test="perms != null and perms != ''">
+                and perms = #{perms}
             </if>
-            <if test="roleId != null and roleId != ''">
-                and role_id != #{roleId}
+            <if test="id != null and id != ''">
+                and role_id != #{id}
             </if>
         </where>
         )

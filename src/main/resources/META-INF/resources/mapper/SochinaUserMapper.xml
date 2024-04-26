@@ -29,14 +29,14 @@
                 and account = #{account}
             </if>
             <if test="userId != null and userId != ''">
-                and user_id != #{userId}
+                and user_id != #{id}
             </if>
         </where>
         )
     </select>
 
     <update id="changeState">
-        update sochina_user set state = #{state} where user_id = #{userId}
+        update sochina_user set state = #{state} where user_id = #{id}
     </update>
 
     <update id="removeBatchById" parameterType="list">

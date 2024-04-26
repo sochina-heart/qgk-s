@@ -14,7 +14,7 @@ interface ResourceMapper: BaseMapper<Resource> {
 
     fun getRouter(appId: String): List<MenuItem>
 
-    fun isExist(resource: Resource): Int
+    fun isExist(id: String, perms: String): Int
 
     fun removeBatchById(list: List<String>): Int
 }

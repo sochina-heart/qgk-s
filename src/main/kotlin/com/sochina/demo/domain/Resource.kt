@@ -30,8 +30,6 @@ class Resource: BaseDomain() {
     @TableField("ancestor_list")
     var ancestorList = ""
 
-    var redirect: String = ""
-
     var cache: String = ""
 
     @TableField("menu_type")

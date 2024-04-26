@@ -3,6 +3,7 @@ package com.sochina.demo.handler
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
+import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.domain.SochinaUser
 import com.sochina.demo.mapper.SochinaUserMapper
 import com.sochina.demo.utils.PasswordUtils
@@ -54,7 +55,7 @@ class SochinaUserHandler(
                 sochinaUser.sex.takeIf { it.isNotBlank() }?.let { eq("sex", it) }
             }
             .orderByDesc("update_time")
-            .select("user_id", "account", "user_name", "sex", "user_email", "home_address", "personal_description")
+            .select("user_id", "account", "user_name", "sex", "user_email", "state")
         val list =
             baseMapper.selectPage(
                 sochinaUser.page?.let { Page(it.pageNumber.toLong(), it.pageSize.toLong()) },
@@ -68,7 +69,7 @@ class SochinaUserHandler(
             when {
                 sochinaUser.userPassword.isEmpty() -> AjaxResult.error("user password is empty")
                 (PasswordUtils.validate(sochinaUser.userPassword) < 4) -> AjaxResult.error("user password is weak password")
-                (baseMapper.isExist(sochinaUser) > 0) -> AjaxResult.error("user has already")
+                (baseMapper.isExist(sochinaUser.userId, sochinaUser.account) > 0) -> AjaxResult.error("user has already")
                 else -> {
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
@@ -82,7 +83,7 @@ class SochinaUserHandler(
 
     fun updateUser(sochinaUser: SochinaUser): Uni<AjaxResult> {
         return uni {
-            if (baseMapper.isExist(sochinaUser) > 0) {
+            if (baseMapper.isExist(sochinaUser.userId, sochinaUser.account) > 0) {
                 AjaxResult.success("user has already")
             } else {
                 AjaxResult.toAjax(baseMapper.updateById(sochinaUser))
@@ -114,8 +115,8 @@ class SochinaUserHandler(
 
     @POST
     @Path("/changeState")
-    fun changeState(sochinaUser: SochinaUser): Uni<AjaxResult> {
-        return uni { AjaxResult.toAjax(baseMapper.changeState(sochinaUser)) }
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
+        return uni { AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state)) }
     }
 
     @POST

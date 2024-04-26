@@ -11,7 +11,6 @@
         <result property="parentId" column="parent_id"/>
         <result property="path" column="path"/>
         <result property="perms" column="perms"/>
-        <result property="redirect" column="redirect"/>
         <result property="cache" column="cache"/>
         <result property="menuType" column="menu_type"/>
         <result property="ancestorList" column="ancestor_list"/>
@@ -29,8 +28,8 @@
         select exists(
         select resource_id from sochina_resource
         <where>
-            <if test="resourceName != null and resourceName != ''">
-                and resource_name = #{resourceName}
+            <if test="perms != null and perms != ''">
+                and perms = #{perms}
             </if>
             <if test="resourceId != null and resourceId != ''">
                 and resource_id != #{resourceId}

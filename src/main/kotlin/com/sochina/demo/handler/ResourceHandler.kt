@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Ids
 import com.sochina.demo.domain.MenuItem
+import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.domain.Resource
 import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
@@ -158,7 +159,7 @@ class ResourceHandler(
     @Path("/save")
     fun saveResource(@Valid resource: Resource): Uni<AjaxResult> {
         return uni {
-            if (baseMapper.isExist(resource) > 0) {
+            if (baseMapper.isExist(resource.resourceId, resource.perms) > 0) {
                 logger.warning("resource ${resource.resourceName} has already exist")
                 AjaxResult.success("resource has already")
             } else {
@@ -173,7 +174,7 @@ class ResourceHandler(
 
     @POST
     @Path("/changeState")
-    fun changeState(resource: Resource): Uni<AjaxResult> {
-        return uni { AjaxResult.toAjax(baseMapper.changeState(resource.resourceId, resource.state)) }
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
+        return uni { AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state)) }
     }
 }
