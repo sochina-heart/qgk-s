@@ -60,5 +60,7 @@ class MenuItem {
 
     var path: String = ""
 
+    var visible: String = ""
+
     var children: List<MenuItem> = emptyList()
 }

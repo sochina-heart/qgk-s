@@ -31,8 +31,8 @@
             <if test="perms != null and perms != ''">
                 and perms = #{perms}
             </if>
-            <if test="resourceId != null and resourceId != ''">
-                and resource_id != #{resourceId}
+            <if test="id != null and id != ''">
+                and resource_id != #{id}
             </if>
         </where>
         )
@@ -43,7 +43,8 @@
         resource_id as id,
         resource_name as name,
         parent_id as pid,
-        path
+        path,
+        visible
         from sochina_resource where state = 0 and delete_flag = 0 and app_id = #{appId} and menu_type in('M', 'C')
         order by order_num asc
     </select>

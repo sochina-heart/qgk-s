@@ -28,7 +28,7 @@
             <if test="account != null and account != ''">
                 and account = #{account}
             </if>
-            <if test="userId != null and userId != ''">
+            <if test="id != null and id != ''">
                 and user_id != #{id}
             </if>
         </where>

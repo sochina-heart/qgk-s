@@ -10,6 +10,7 @@ import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
+import io.quarkus.cache.CacheInvalidate
 import io.quarkus.cache.CacheKey
 import io.quarkus.cache.CacheResult
 import io.smallrye.mutiny.Uni
@@ -90,6 +91,9 @@ class ResourceHandler(
         return getRouterTree(list, "0")
     }
 
+    @CacheInvalidate(cacheName = "sochinaRouter")
+    fun removeCacheRouter(@CacheKey userId: String) {}
+
     private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
         val result = mutableListOf<MenuItem>()
         list.forEach {
@@ -145,6 +149,7 @@ class ResourceHandler(
         resource.resourceId = UuidUtils.fastSimpleUUID()
         resource.createTime = Date()
         resource.deleteFlag = "0"
+        removeCacheRouter("12345")
         return AjaxResult.success(baseMapper.insert(resource))
     }
 
@@ -152,22 +157,21 @@ class ResourceHandler(
         if (resource.parentId == "topzero") {
             return AjaxResult.success()
         }
+        removeCacheRouter("12345")
         return AjaxResult.toAjax(baseMapper.updateById(resource))
     }
 
     @POST
     @Path("/save")
-    fun saveResource(@Valid resource: Resource): Uni<AjaxResult> {
-        return uni {
-            if (baseMapper.isExist(resource.resourceId, resource.perms) > 0) {
-                logger.warning("resource ${resource.resourceName} has already exist")
-                AjaxResult.success("resource has already")
+    fun saveResource(@Valid resource: Resource): AjaxResult {
+        return if (baseMapper.isExist(resource.resourceId, resource.perms) > 0) {
+            logger.warning("resource ${resource.resourceName} has already exist")
+            AjaxResult.success("resource has already")
+        } else {
+            if (resource.resourceId.isBlank()) {
+                addResource(resource)
             } else {
-                if (resource.resourceId.isBlank()) {
-                    addResource(resource)
-                } else {
-                    updateResource(resource)
-                }
+                updateResource(resource)
             }
         }
     }
