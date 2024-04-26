@@ -9,6 +9,8 @@ import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
+import io.quarkus.cache.CacheKey
+import io.quarkus.cache.CacheResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.validation.Valid
@@ -37,7 +39,7 @@ class ResourceHandler(
             .apply {
                 resource.resourceName.takeIf { it.isNotBlank() }?.let { like("resource_name", it) }
             }
-            .select("resource_id", "resource_name", "app_id", "perms", "path", "component", "state", "menu_type")
+            .select("resource_id", "resource_name", "app_id", "perms", "path", "state", "menu_type")
             .orderByDesc("update_time")
         val list =
             baseMapper.selectPage(
@@ -77,12 +79,14 @@ class ResourceHandler(
     @Path("/getRouter")
     fun getRouter(
         @QueryParam("appId") appId: String
-    ): Uni<AjaxResult> {
-        return uni {
-            val list = baseMapper.getRouter(appId)
-            val routerList = getRouterTree(list, "0")
-            AjaxResult.success(routerList)
-        }
+    ): AjaxResult {
+        return AjaxResult.success(cacheRouter("12345", appId))
+    }
+
+    @CacheResult(cacheName = "sochinaRouter")
+    fun cacheRouter(@CacheKey userId: String, appId: String): List<MenuItem> {
+        val list = baseMapper.getRouter(appId)
+        return getRouterTree(list, "0")
     }
 
     private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {

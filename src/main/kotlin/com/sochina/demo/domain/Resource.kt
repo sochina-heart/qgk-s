@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
+import jakarta.validation.constraints.NotBlank
 
 @TableName("sochina_resource")
 class Resource: BaseDomain() {
@@ -23,6 +24,7 @@ class Resource: BaseDomain() {
 
     var path: String = ""
 
+    @NotBlank(message = "唯一标识不能为空")
     var perms: String = ""
 
     @TableField("ancestor_list")

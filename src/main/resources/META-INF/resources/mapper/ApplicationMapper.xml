@@ -7,6 +7,7 @@
     <resultMap type="com.sochina.demo.domain.Application" id="ApplicationResult">
         <id property="appId" column="app_id"/>
         <result property="appName" column="app_name"/>
+        <result property="perms" column="perms"/>
         <result property="appUser" column="app_user"/>
         <result property="appPhone" column="app_phone"/>
         <result property="appEmail" column="app_email"/>
@@ -30,18 +31,18 @@
         select exists(
         select app_id from sochina_app
         <where>
-            <if test="appName != null and appName != ''">
-                and app_name = #{appName}
+            <if test="perms != null and perms != ''">
+                and perms = #{perms}
             </if>
-            <if test="appId != null and appId != ''">
-                and app_id != #{appId}
+            <if test="id != null and id != ''">
+                and app_id != #{id}
             </if>
         </where>
         )
     </select>
 
     <update id="changeState">
-        update sochina_app set state = #{state} where app_id = #{appId}
+        update sochina_app set state = #{state} where app_id = #{id}
     </update>
 
     <update id="removeBatchById" parameterType="list">

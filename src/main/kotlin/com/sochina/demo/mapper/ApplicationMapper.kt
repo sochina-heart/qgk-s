@@ -9,9 +9,9 @@ interface ApplicationMapper: BaseMapper<Application> {
 
     fun appMap(): List<Map<String, String>>
 
-    fun changeState(application: Application): Int
+    fun changeState(id: String, state: String): Int
 
-    fun isExist(application: Application): Int
+    fun isExist(id: String, perms: String): Int
 
     fun removeBatchById(list: List<String>): Int
 }

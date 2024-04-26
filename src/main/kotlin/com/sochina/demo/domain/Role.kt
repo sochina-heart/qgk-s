@@ -3,6 +3,7 @@ package com.sochina.demo.domain
 import com.baomidou.mybatisplus.annotation.TableField
 import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
+import jakarta.validation.constraints.NotBlank
 
 @TableName("sochina_role")
 class Role: BaseDomain() {
@@ -13,6 +14,7 @@ class Role: BaseDomain() {
     @TableField("role_name")
     var roleName: String = ""
 
+    @NotBlank(message = "唯一标识不能为空")
     var perms: String = ""
 
     @TableField("app_id")

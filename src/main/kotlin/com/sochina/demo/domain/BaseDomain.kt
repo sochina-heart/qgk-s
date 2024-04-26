@@ -2,7 +2,6 @@ package com.sochina.demo.domain
 
 import com.baomidou.mybatisplus.annotation.TableField
 import com.fasterxml.jackson.annotation.JsonFormat
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.annotation.JsonProperty
 import java.awt.image.BufferedImage
 import java.util.Date
@@ -53,6 +52,11 @@ class VerificationCode {
 
 class Ids {
     var ids: List<String> = emptyList()
+}
+
+class ModifyState {
+    var id: String = ""
+    var state: String = ""
 }
 
 class OperLog {

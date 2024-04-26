@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.domain.Application
 import com.sochina.demo.domain.Ids
+import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.mapper.ApplicationMapper
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
@@ -89,7 +90,7 @@ class ApplicationHandler(
     @Path("/save")
     fun saveApplication(@Valid application: Application): Uni<AjaxResult> {
         return uni {
-            if (baseMapper.isExist(application) > 0) {
+            if (baseMapper.isExist(application.appId, application.perms) > 0) {
                 AjaxResult.error("application has already exist")
             } else {
                 if (application.appId.isBlank()) {
@@ -103,9 +104,9 @@ class ApplicationHandler(
 
     @POST
     @Path("/changeState")
-    fun changeState(application: Application): Uni<AjaxResult> {
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
         return uni {
-            AjaxResult.toAjax(baseMapper.changeState(application))
+            AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state))
         }
     }
 }
