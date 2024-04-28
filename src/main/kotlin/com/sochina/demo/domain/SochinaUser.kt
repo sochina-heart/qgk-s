@@ -27,6 +27,9 @@ class SochinaUser : BaseDomain() {
     @TableField("user_password")
     var userPassword: String = ""
 
+    var salt: String = ""
+
+
     @Length(max = 1, message = "性别长度为1")
     var sex: String = ""
 
