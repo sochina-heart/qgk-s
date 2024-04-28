@@ -38,6 +38,7 @@ class SochinaUserHandler(
             }
             val user = baseMapper.selectById(id)
             user.userPassword = ""
+            user.salt = ""
             AjaxResult.success(user)
         }
     }
@@ -74,7 +75,8 @@ class SochinaUserHandler(
                     sochinaUser.createTime = Date()
                     sochinaUser.userId = UuidUtils.fastSimpleUUID()
                     sochinaUser.deleteFlag = "0"
-                    sochinaUser.userPassword = SM3Utils.encrypt(sochinaUser.userPassword)
+                    sochinaUser.salt = UuidUtils.fastSimpleUUID()
+                    sochinaUser.userPassword = SM3Utils.encryptPlus(sochinaUser.salt, sochinaUser.userPassword)
                     AjaxResult.toAjax(baseMapper.insert(sochinaUser))
                 }
             }

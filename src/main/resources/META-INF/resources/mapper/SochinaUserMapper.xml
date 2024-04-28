@@ -9,6 +9,7 @@
         <result property="account" column="account"/>
         <result property="userName" column="user_name"/>
         <result property="userPassword" column="user_password"/>
+        <result property="salt" column="salt"/>
         <result property="sex" column="sex"/>
         <result property="userEmail" column="user_email"/>
         <result property="homeAddress" column="home_address"/>

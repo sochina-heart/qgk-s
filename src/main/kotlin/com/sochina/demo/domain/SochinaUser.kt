@@ -29,7 +29,6 @@ class SochinaUser : BaseDomain() {
 
     var salt: String = ""
 
-
     @Length(max = 1, message = "性别长度为1")
     var sex: String = ""
 
