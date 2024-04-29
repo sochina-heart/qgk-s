@@ -8,6 +8,7 @@ import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.domain.Resource
 import com.sochina.demo.domain.ResourceVo
 import com.sochina.demo.mapper.ResourceMapper
+import com.sochina.demo.utils.encrypt.gm.sm4.SM4Utils
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
 import io.quarkus.cache.CacheInvalidate
@@ -17,6 +18,7 @@ import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.HeaderParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
@@ -80,9 +82,11 @@ class ResourceHandler(
     @GET
     @Path("/getRouter")
     fun getRouter(
-        @QueryParam("appId") appId: String
+        @QueryParam("appId") appId: String,
+        @HeaderParam("Authorization") token: String
     ): AjaxResult {
-        return AjaxResult.success(cacheRouter("12345", appId))
+        val userId = SM4Utils.decryptCbc(token)
+        return AjaxResult.success(cacheRouter(userId!!, appId))
     }
 
     @CacheResult(cacheName = "sochinaRouter")
@@ -90,9 +94,6 @@ class ResourceHandler(
         val list = baseMapper.getRouter(appId)
         return getRouterTree(list, "0")
     }
-
-    @CacheInvalidate(cacheName = "sochinaRouter")
-    fun removeCacheRouter(@CacheKey userId: String) {}
 
     private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
         val result = mutableListOf<MenuItem>()
@@ -149,7 +150,6 @@ class ResourceHandler(
         resource.resourceId = UuidUtils.fastSimpleUUID()
         resource.createTime = Date()
         resource.deleteFlag = "0"
-        removeCacheRouter("12345")
         return AjaxResult.success(baseMapper.insert(resource))
     }
 
@@ -157,21 +157,22 @@ class ResourceHandler(
         if (resource.parentId == "topzero") {
             return AjaxResult.success()
         }
-        removeCacheRouter("12345")
         return AjaxResult.toAjax(baseMapper.updateById(resource))
     }
 
     @POST
     @Path("/save")
-    fun saveResource(@Valid resource: Resource): AjaxResult {
-        return if (baseMapper.isExist(resource.resourceId, resource.perms) > 0) {
-            logger.warning("resource ${resource.resourceName} has already exist")
-            AjaxResult.success("resource has already")
-        } else {
-            if (resource.resourceId.isBlank()) {
-                addResource(resource)
+    fun saveResource(@Valid resource: Resource): Uni<AjaxResult> {
+        return uni {
+            if (baseMapper.isExist(resource.resourceId, resource.perms) > 0) {
+                logger.warning("resource ${resource.resourceName} has already exist")
+                AjaxResult.success("resource has already")
             } else {
-                updateResource(resource)
+                if (resource.resourceId.isBlank()) {
+                    addResource(resource)
+                } else {
+                    updateResource(resource)
+                }
             }
         }
     }
