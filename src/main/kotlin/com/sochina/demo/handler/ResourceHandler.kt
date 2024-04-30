@@ -29,6 +29,7 @@ import java.util.logging.Logger
 @Path("/resource")
 class ResourceHandler(
     private val baseMapper: ResourceMapper,
+    private val cacheHandler: CacheHandler,
 ) {
 
     private val logger: Logger = Logger.getLogger(ResourceHandler::class.java.name)
@@ -107,6 +108,33 @@ class ResourceHandler(
         }
     }
 
+    @GET
+    @Path("/getRouter")
+    fun getRouter(
+        @QueryParam("appId") appId: String,
+        @HeaderParam("Authorization") token: String
+    ): AjaxResult {
+        return AjaxResult.success(cacheRouter(token, appId))
+    }
+
+    @CacheResult(cacheName = "sochinaRouter")
+    fun cacheRouter(@CacheKey token: String, appId: String): List<MenuItem> {
+        val permsList  = cacheHandler.getCachePerms(token)
+        val list = baseMapper.getRouter(appId).filter { it.path in permsList }
+        return getRouterTree(list, "0")
+    }
+
+    private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
+        val result = mutableListOf<MenuItem>()
+        list.forEach {
+            if (it.pid == parentId) {
+                it.children = getRouterTree(list, it.id)
+                result.add(it)
+            }
+        }
+        return result
+    }
+
     @POST
     @Path("/remove")
     fun removeResource(ids: Ids): Uni<AjaxResult> {
@@ -152,7 +180,5 @@ class ResourceHandler(
 
     @POST
     @Path("/changeState")
-    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
-        return uni { AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state)) }
-    }
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> = uni { AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state)) }
 }

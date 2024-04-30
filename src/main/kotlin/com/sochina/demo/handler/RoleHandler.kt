@@ -18,7 +18,7 @@ import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
 import jakarta.ws.rs.QueryParam
-import java.util.Date
+import java.util.*
 import java.util.logging.Logger
 
 @Path("/role")
@@ -132,9 +132,5 @@ class RoleHandler(
 
     @POST
     @Path("/changeState")
-    fun changeState(modifyState: ModifyState): Uni<AjaxResult> {
-        return uni {
-            AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state))
-        }
-    }
+    fun changeState(modifyState: ModifyState): Uni<AjaxResult> = uni { AjaxResult.toAjax(baseMapper.changeState(modifyState.id, modifyState.state)) }
 }
