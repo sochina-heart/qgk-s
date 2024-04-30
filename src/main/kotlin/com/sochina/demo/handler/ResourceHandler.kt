@@ -79,33 +79,6 @@ class ResourceHandler(
         }
     }
 
-    @GET
-    @Path("/getRouter")
-    fun getRouter(
-        @QueryParam("appId") appId: String,
-        @HeaderParam("Authorization") token: String
-    ): AjaxResult {
-        val userId = SM4Utils.decryptCbc(token)
-        return AjaxResult.success(cacheRouter(userId!!, appId))
-    }
-
-    @CacheResult(cacheName = "sochinaRouter")
-    fun cacheRouter(@CacheKey userId: String, appId: String): List<MenuItem> {
-        val list = baseMapper.getRouter(appId)
-        return getRouterTree(list, "0")
-    }
-
-    private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
-        val result = mutableListOf<MenuItem>()
-        list.forEach {
-            if (it.pid == parentId) {
-                it.children = getRouterTree(list, it.id)
-                result.add(it)
-            }
-        }
-        return result
-    }
-
     private fun getResourceTree(list: List<Resource>, parentId: String): List<ResourceVo> {
         val result = mutableListOf<ResourceVo>()
         list.forEach {

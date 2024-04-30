@@ -1,23 +1,30 @@
 package com.sochina.demo.handler
 
+import com.arjuna.ats.internal.jdbc.drivers.modifiers.list
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page
 import com.sochina.demo.constants.ErrorEnum
 import com.sochina.demo.domain.Ids
+import com.sochina.demo.domain.MenuItem
 import com.sochina.demo.domain.ModifyState
 import com.sochina.demo.domain.SochinaUser
+import com.sochina.demo.mapper.ResourceMapper
 import com.sochina.demo.mapper.SochinaUserMapper
 import com.sochina.demo.utils.PasswordUtils
 import com.sochina.demo.utils.encrypt.gm.sm4.SM4Utils
 import com.sochina.demo.utils.uuid.UuidUtils
 import com.sochina.demo.utils.web.AjaxResult
+import io.quarkus.cache.CacheKey
+import io.quarkus.cache.CacheResult
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.uni
 import jakarta.validation.Valid
 import jakarta.ws.rs.GET
+import jakarta.ws.rs.HeaderParam
 import jakarta.ws.rs.POST
 import jakarta.ws.rs.Path
 import jakarta.ws.rs.PathParam
+import jakarta.ws.rs.QueryParam
 import java.util.*
 import java.util.logging.Logger
 
@@ -25,6 +32,7 @@ import java.util.logging.Logger
 @Path("/user")
 class SochinaUserHandler(
     private val baseMapper: SochinaUserMapper,
+    private val resourceMapper: ResourceMapper,
 ) {
 
     private val logger: Logger = Logger.getLogger(SochinaUserHandler::class.java.name)
@@ -128,22 +136,52 @@ class SochinaUserHandler(
 
     @POST
     @Path("/login")
-    fun login(sochinaUser: SochinaUser): Uni<AjaxResult> {
-        return uni {
-            sochinaUser.userPassword = SM4Utils.desEncrypt(sochinaUser.userPassword)
-            if (sochinaUser.account.isEmpty() || sochinaUser.userPassword.isEmpty()) {
-                return@uni AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message)
-            }
-            val queryWrapper = QueryWrapper<SochinaUser>().eq("account", sochinaUser.account)
-                .eq("state", "0")
-                .eq("delete_flag", "0")
-                .select("user_id", "user_password", "salt")
-            val user = baseMapper.selectOne(queryWrapper)
-                ?: return@uni AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message);
-            if (!SM4Utils.checkPassword(sochinaUser.userPassword, user.salt, user.userPassword)) {
-                return@uni AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message);
-            }
-            AjaxResult.success(mapOf("tn" to SM4Utils.encryptCbc(user.userId)));
+    fun login(sochinaUser: SochinaUser): AjaxResult {
+        sochinaUser.userPassword = SM4Utils.desEncrypt(sochinaUser.userPassword)
+        if (sochinaUser.account.isEmpty() || sochinaUser.userPassword.isEmpty()) {
+            return AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message)
         }
+        val queryWrapper = QueryWrapper<SochinaUser>().eq("account", sochinaUser.account)
+            .eq("state", "0")
+            .eq("delete_flag", "0")
+            .select("user_id", "user_password", "salt")
+        val user = baseMapper.selectOne(queryWrapper)
+            ?: return AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message);
+        if (!SM4Utils.checkPassword(sochinaUser.userPassword, user.salt, user.userPassword)) {
+            return AjaxResult.error(ErrorEnum.ERROR_USER_INFO.code, ErrorEnum.ERROR_USER_INFO.message);
+        }
+        val token = SM4Utils.encryptCbc(user.userId + "-" + UuidUtils.fastSimpleUUID())
+        cachePerms(token!!, user.userId, sochinaUser.appId)
+        return AjaxResult.success(mapOf("tn" to token));
+    }
+
+    @CacheResult(cacheName = "sochinaPerms")
+    fun cachePerms(@CacheKey token: String, userId: String, appId: String): List<String> = baseMapper.getPermsByUserId(userId, appId)
+
+    @GET
+    @Path("/getRouter")
+    fun getRouter(
+        @QueryParam("appId") appId: String,
+        @HeaderParam("Authorization") token: String
+    ): AjaxResult {
+        return AjaxResult.success(cacheRouter(token, appId))
+    }
+
+    @CacheResult(cacheName = "sochinaRouter")
+    fun cacheRouter(@CacheKey token: String, appId: String): List<MenuItem> {
+        val permsList = cachePerms(token, SM4Utils.decryptCbc(token)!!.split("-")[0], appId)
+        val list = resourceMapper.getRouter(appId).filter { it.perms in permsList }.toList()
+        return getRouterTree(list, "0")
+    }
+
+    private fun getRouterTree(list: List<MenuItem>, parentId: String): List<MenuItem> {
+        val result = mutableListOf<MenuItem>()
+        list.forEach {
+            if (it.pid == parentId) {
+                it.children = getRouterTree(list, it.id)
+                result.add(it)
+            }
+        }
+        return result
     }
 }

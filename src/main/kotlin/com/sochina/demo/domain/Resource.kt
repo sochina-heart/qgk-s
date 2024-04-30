@@ -58,6 +58,8 @@ class MenuItem {
 
     var name: String = ""
 
+    var perms: String = ""
+
     var path: String = ""
 
     var visible: String = ""

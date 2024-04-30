@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.annotation.TableId
 import com.baomidou.mybatisplus.annotation.TableName
 import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.NotBlank
-import org.bouncycastle.util.encoders.UTF8
 import org.hibernate.validator.constraints.Length
 
 @TableName("sochina_user")

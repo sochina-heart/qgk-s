@@ -36,6 +36,21 @@
         )
     </select>
 
+    <select id="getPermsByUserId">
+        SELECT DISTINCT res.perms
+        FROM sochina_user u
+                 JOIN sochina_user_rela_role ur ON ur.user_id = u.user_id
+                 JOIN (SELECT role_id FROM sochina_role WHERE app_id = #{appId} AND state = '0' AND delete_flag = '0') r
+                      ON r.role_id = ur.role_id
+                 JOIN sochina_role_rela_resource rr ON rr.role_id = r.role_id
+                 JOIN (SELECT resource_id, perms
+                       FROM sochina_resource
+                       WHERE state = '0'
+                         AND delete_flag = '0') res ON res.resource_id = rr.resource_id
+        WHERE u.user_id = #{id}
+          AND res.perms IS NOT NULL
+    </select>
+
     <update id="changeState">
         update sochina_user set state = #{state} where user_id = #{id}
     </update>
