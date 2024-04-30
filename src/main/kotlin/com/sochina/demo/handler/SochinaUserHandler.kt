@@ -170,7 +170,7 @@ class SochinaUserHandler(
     @CacheResult(cacheName = "sochinaRouter")
     fun cacheRouter(@CacheKey token: String, appId: String): List<MenuItem> {
         val permsList = cachePerms(token, SM4Utils.decryptCbc(token)!!.split("-")[0], appId)
-        val list = resourceMapper.getRouter(appId).filter { it.perms in permsList }.toList()
+        val list = resourceMapper.getRouter(appId).filter { it.path in permsList }
         return getRouterTree(list, "0")
     }
 
