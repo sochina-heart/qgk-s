@@ -32,6 +32,7 @@ import java.util.logging.Logger
 @Path("/user")
 class SochinaUserHandler(
     private val baseMapper: SochinaUserMapper,
+    private val cacheHandler: CacheHandler
 ) {
 
     private val logger: Logger = Logger.getLogger(SochinaUserHandler::class.java.name)
@@ -149,6 +150,7 @@ class SochinaUserHandler(
         }
         val token = SM4Utils.encryptCbc(user.userId + "-" + UuidUtils.fastSimpleUUID())
         cachePerms(token!!, user.userId, sochinaUser.appId)
+        cacheHandler.cacheToken(token)
         return AjaxResult.success(mapOf("tn" to token));
     }
 
